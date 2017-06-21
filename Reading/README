@@ -1,3 +1,0 @@
-To convert midi to pdf
-
-midi2ly testOut.mid -o temp.ly && lilypond -fpdf temp.ly
