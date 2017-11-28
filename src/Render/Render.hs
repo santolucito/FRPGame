@@ -29,17 +29,20 @@ placeGameObjs g = let
    os = S.filter (_display) os'
    (px,py) = mapTup fromIntegral $ view (board.player1.gameObj.position) g
    myPos o = ((fromIntegral$fst$_position o),(fromIntegral$snd$_position o))
-   f o = translate (fst $myPos o-px) (snd $myPos o-py) $ snd $ getImg g o
+   myScale o = scale (_scaleFactor o) (_scaleFactor o)
+   f o = translate (fst $myPos o-px) (snd $myPos o-py) $ myScale o $ snd $ getImg g o
  in
    map f (S.toList os)
 
 -- | keep the player centered at all times
+--   TODO merge this with placeGameObjs
 placePlayer :: GameState -> Picture
 placePlayer g = let
    p = snd $ getImg g $ view (board.player1) g
    --(x,y) = mapTup fromIntegral ((view (board.player1.position)) g)
+   sf = view (board.player1.gameObj.scaleFactor) g
  in
-   translate 0 0 p
+   translate 0 0 $ scale sf sf p
      
 -- | move the background around the player
 placeBkgd :: GameState -> Picture
@@ -51,7 +54,7 @@ placeBkgd g = let
 
 placeText :: GameState -> Picture
 placeText g = 
-   translate (50) (120) $ text $ show $ (10000 - (_aliveTime._player1._board) g)
+   translate (50) (120) $ text $ show $ (_score._player1._board) g
 
 mapTup :: (a -> b) -> (a, a) -> (b, b)
 mapTup f (a1, a2) = (f a1, f a2)

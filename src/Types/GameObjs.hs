@@ -13,6 +13,7 @@ import GHC.Generics
 
 data GameObj = GameObj {
    _position :: (Int,Int)
+  ,_scaleFactor :: Float
   ,_display :: Bool
   ,_currentImg :: FilePath --fixed over time for static images
   ,_gifPath :: Maybe FilePath --for gifs, the top level dir where component images are found

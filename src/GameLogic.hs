@@ -11,6 +11,7 @@ import Render.ImageIO
 import Types.HasImage
 
 import Control.Lens
+import Data.Traversable
 import Codec.Picture 
 import qualified Data.HashSet as S
 
@@ -39,17 +40,20 @@ trackTime t g =
 move :: Direction -> GameState -> GameState
 move d g = if wallCollision (makeMove d g) then g else makeMove d g
 
-
+--TODO maybe still relatively expensive in toList everytime, maybe cache or use fancy lenses?
 findObjCollisions :: GameState -> GameState
-findObjCollisions g =
-  over (board.objs) (S.map (updateCollide g)) g
+findObjCollisions g = let
+  (g',objs') = mapAccumL updateCollide g (filter _display $ S.toList $ view (board.objs) g)
+ in 
+  set (board.objs) (S.fromList objs') g'
 
 --what happens to an obj when the player collides with it
-updateCollide :: GameState -> GameObj -> GameObj
+updateCollide :: GameState -> GameObj -> (GameState,GameObj)
 updateCollide g o = 
   if elem (_position o) (playerLocs g)
-  then set display False o
-  else o
+  then (over (board.player1.score) (+1) g,
+        set display False o)
+  else (g,o)
 
 --what happens to the player when it collides with an obj
 --playerCollideUpdate :: ??
@@ -80,8 +84,9 @@ objectDims :: GameState -> GameObj -> (Int,Int,Int,Int)
 objectDims g o = let
   objImg = fst $ getImg g o
   (x,y) = _position o
+  sizeBy f = ceiling $ _scaleFactor o * (fromIntegral $ f objImg)
  in
-  (x,y,imageWidth objImg,imageHeight objImg)
+  (x,y,sizeBy imageWidth,sizeBy imageHeight)
   
 pixelAtFromCenter :: Image PixelRGBA8 -> Int -> Int -> PixelRGBA8
 pixelAtFromCenter i x y = let

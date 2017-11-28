@@ -11,7 +11,7 @@ executable TransGame
   hs-source-dirs:      src
   main-is:             Main.hs
   build-depends:       base >=4.9
-                     , gloss >=1.9.2.1
+                     , gloss >=1.11
                      , gloss-juicy >= 0.2.2
                      , gloss-algorithms >=1.9.2.1
                      , Yampa >= 0.9.3

@@ -17,6 +17,8 @@ import qualified Graphics.Gloss.Interface.IO.Game as G
 import Data.Map (union)
 import System.Random (newStdGen, StdGen)
 
+import qualified Settings
+
 main :: IO()
 main = playGame
 
@@ -34,9 +36,9 @@ playGame =do
     
     let imgs = levelImgs `union` playerImgs
     playYampa
-        (G.InWindow "Yampa Example" (420, 360) (800, 600))
+        (G.InWindow "Yampa Example" (800, 600) (800, 600))
         G.white
-        60
+        Settings.fps
         (mainSF g imgs)
 
 -- | Our main signal function which is responsible for handling the whole

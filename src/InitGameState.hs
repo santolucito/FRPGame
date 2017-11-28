@@ -27,6 +27,7 @@ emptyBoard is = Board {
   _player1 = Player {
     _gameObj  = GameObj {
       _position = (0,0)
+     ,_scaleFactor = 1.6
      ,_currentImg = ""
      ,_gifPath = Just ""
      ,_display = True}
@@ -34,18 +35,13 @@ emptyBoard is = Board {
    ,_aliveTime= 0
    ,_score    = 0
    ,_inMotion = False}
- ,_objs = S.fromList [testcoin,testcoin2]
+ ,_objs = S.fromList $ map (uncurry makeCoin) [(-120,25),(120,25),(120,90),(120,-40)]
  ,_levelName = Level Settings.levelImageSrc
 }
 
-testcoin = GameObj {
-  _position = (80,10)
-  ,_currentImg = "coin.png"
-  ,_gifPath = Nothing
-  ,_display = True
-}
-testcoin2 = GameObj {
-  _position = (150,10)
+makeCoin x y = GameObj {
+  _position = (x,y)
+  ,_scaleFactor = 1
   ,_currentImg = "coin.png"
   ,_gifPath = Nothing
   ,_display = True
