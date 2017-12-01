@@ -49,4 +49,3 @@ getGifFrame time fdir = let
    
   
  
-traceMe x = traceShow x x

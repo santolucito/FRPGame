@@ -118,7 +118,11 @@ makeMove dt d g = let
      Left  -> (-s,0)
      Right -> (s,0)
      _     -> (0,0)
-    appT (dx,dy) (x,y) = (x+dx,y+dy)
+    appT (dx,dy) (x,y) = let
+      (x',y') = (x+dx,y+dy)
+     in
+      if abs x' > 375 then (-x',y') else (x',y')
+
     newPos = over (board.player1.gameObj.position) (appT updateF) g
     newDir = set (board.player1.dir) d newPos
   in

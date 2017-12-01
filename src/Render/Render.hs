@@ -23,6 +23,7 @@ renderState s =
   (mconcat $ placeGameObjs s) <>
   placeText s
 
+--TODO major refactoring needed here
 placeGameObjs :: GameState -> [Picture]
 placeGameObjs g = let
    os' = view (board.objs) g :: S.HashSet GameObj
