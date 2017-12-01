@@ -1,6 +1,7 @@
 {-#  LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE Arrows #-}
+{-# LANGUAGE PartialTypeSignatures #-}
 
 module GameLogic where
 
@@ -27,16 +28,27 @@ update = proc (gameState, input) ->
       t <- time -< ()
       t' <- iPre 0 -< t
     gs <- arr (uncurry trackTime) -< (t, gameState)
-    moved <- arr useInput -< (gs,input,t-t')
-    collisons <- arr findObjCollisions -< moved 
+    movedPlayer <- arr useInput -< (gs,input,t-t')
+    movedGhosts <- arr aiMove -< (movedPlayer,t-t')
+    collisons <- arr findObjCollisions -< movedGhosts
     returnA -< collisons
   where
-    --TODO make continuos time based motion
-    useInput (gameState,input,dt) = case input of
-         None -> if view (board.player1.gameObj.inMotion) gameState
-                 then move dt (view (board.player1.gameObj.dir) gameState) gameState --keep moving the same direction as before
-                 else set (board.player1.gameObj.inMotion) False gameState --dont move in the beginning
-         dir -> move dt dir gameState
+  
+--TODO make continuos time based motion
+useInput :: _ -> GameState
+useInput (gameState,input,dt) = case input of
+  None -> if view (board.player1.gameObj.inMotion) gameState
+            then over (board.player1.gameObj) (moveObj dt (view (board.player1.gameObj.dir) gameState) gameState) gameState --keep moving the same direction as before
+            else set (board.player1.gameObj.inMotion) False gameState --dont move in the beginning
+  dir -> over (board.player1.gameObj) (moveObj dt dir gameState) gameState
+
+aiMove :: _ -> GameState
+aiMove (gameState,dt) = let
+  isGhost o = (_name o == "ghost")
+  moveGhost = S.map (\o-> if isGhost o then moveMe (fromEnum (maxBound::Direction)) (_dir o) o else o)
+  moveMe n d o = if moveObj dt d gameState o == o && n>=0 then traceShow ("cant go "++(show d)) $ moveMe (n-1) (nextDir d) o else traceShow n $ moveObj dt d gameState o
+ in
+  over (board.objs) moveGhost gameState
 
 trackTime :: Time -> GameState -> GameState
 trackTime t g = 
@@ -44,12 +56,12 @@ trackTime t g =
 
 -- | Check two moves ahead in case we get stuck due to rounding error or something (one pixel is not enuf to block)
 -- TODO should explicity check for stuck at every turn, or figure out how to not get stuck in the first place
-move :: Double -> Direction -> GameState -> GameState
-move dt d g = let
-  m = makeMove dt d
+moveObj :: Double -> Direction -> GameState -> GameObj -> GameObj
+moveObj dt d gs o = let
+  m = makeMove dt d 
  in
-   if wallCollision (m g) && wallCollision (m (m g)) 
-   then g else m g
+   if wallCollision gs (m o) && wallCollision gs (m (m o)) 
+   then o else m o
 
 --TODO maybe still relatively expensive in toList everytime, maybe cache or use fancy lenses?
 findObjCollisions :: GameState -> GameState
@@ -61,30 +73,43 @@ findObjCollisions g = let
 --what happens to an obj when the player collides with it
 updateCollide :: GameState -> GameObj -> (GameState,GameObj)
 updateCollide g o = 
-  if elem ((\(x,y)->(floor x,floor y)) $ _position o) (playerLocs g)
+  if elem ((\(x,y)->(floor x,floor y)) $ _position o) (objLocs g (view (board.player1.gameObj) g))
   then (over (board.player1.score) (+1) g,
         set display False o)
   else (g,o)
 
---what happens to the player when it collides with an obj
---playerCollideUpdate :: ??
-
-didCollide :: GameState -> GameObj -> GameObj -> Bool
-didCollide gs g1 g2 = undefined
-
-wallCollision :: GameState -> Bool
-wallCollision g = let
-  walls = fst $ getImg g $ view (board.levelName) g
-  boardPixels = map (\(x,y) -> pixelAtFromCenter walls x y) (playerLocs g)
+wallCollision :: GameState -> GameObj -> Bool
+wallCollision gs o = let
+  walls = fst $ getImg gs $ view (board.levelName) gs
+  boardPixels = map (\(x,y) -> pixelAtFromCenter walls x y) (objLocs gs o)
  in 
   any (==blackAPixel) (boardPixels)
 
+makeMove :: Double -> Direction -> GameObj -> GameObj
+makeMove dt d o = let 
+    s = Settings.speed*dt
+    updateF = case d of
+     Down  -> (0,-s)
+     Up    -> (0,s)
+     Left  -> (-s,0)
+     Right -> (s,0)
+     _     -> (0,0)
+    appT (dx,dy) (x,y) = let
+      (x',y') = (x+dx,y+dy)
+     in
+      if abs x' > 375 then (-x',y') else (x',y')
+
+    objWithNewPos = over (position) (appT updateF) o
+    objWithNewDir = set (dir) d objWithNewPos
+  in
+    set (inMotion) True objWithNewDir
+
+
 --TODO for pixel level detection
 --rather than building rect, get positions of all nonalpha pixels
-playerLocs :: GameState -> [(Int,Int)]
-playerLocs g = let
-  player = view (board.player1.gameObj) g
-  (x,y,xsize,ysize) = objectDims g player
+objLocs ::GameState -> GameObj -> [(Int,Int)]
+objLocs g obj = let
+  (x,y,xsize,ysize) = objectDims g obj
   xsize' = xsize/2
   ysize' = ysize/2
  in
@@ -108,25 +133,6 @@ pixelAtFromCenter i x y = let
  in
   pixelAt i x' y'
   --whitePixel
-
-makeMove :: Double -> Direction -> GameState -> GameState
-makeMove dt d g = let 
-    s = Settings.speed*dt
-    updateF = case d of
-     Down  -> (0,-s)
-     Up    -> (0,s)
-     Left  -> (-s,0)
-     Right -> (s,0)
-     _     -> (0,0)
-    appT (dx,dy) (x,y) = let
-      (x',y') = (x+dx,y+dy)
-     in
-      if abs x' > 375 then (-x',y') else (x',y')
-
-    newPos = over (board.player1.gameObj.position) (appT updateF) g
-    newDir = set (board.player1.gameObj.dir) d newPos
-  in
-    set (board.player1.gameObj.inMotion) True newDir
 
 -- | conveniences
 

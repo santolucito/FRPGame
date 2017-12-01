@@ -38,7 +38,7 @@ emptyBoard is = Board {
    ,_score    = 0}
  ,_objs = S.fromList (
            map (uncurry makeCoin) [(-120,25),(120,25),(120,90),(120,-40)] ++
-           [makeGhost (120,0)]
+           [makeGhost (130,0)]
           )
  ,_levelName = Level Settings.levelImageSrc
 }
@@ -57,7 +57,7 @@ makeCoin x y = GameObj {
 makeGhost (x,y) = GameObj {
    _name = "ghost"
   ,_position = (x,y)
-  ,_scaleFactor = 0.18
+  ,_scaleFactor = 0.13
   ,_display = True
   ,_currentImg = "Ghost/ghost.png"
   ,_gifPath = Nothing

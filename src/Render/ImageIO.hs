@@ -38,7 +38,7 @@ makeImgMap fileNames = do
  return $ toMap fileNames (zip imgs pics)
 
  -- | get the chacter state image given a player state
- --   we also simulate a gif here
+ --   we also simulate a gif here (TODO: do we tho?)
 getImg :: HasImageSrc a => GameState -> a -> (Image PixelRGBA8,G.Picture)
 getImg g o = let
   s = getImageSrc o
