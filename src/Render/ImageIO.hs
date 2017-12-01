@@ -18,7 +18,7 @@ import Data.Maybe
 -- | Where in the file system do images come from
 --   TODO: make this automatically read the dir
 levelImgSrcs :: [FilePath]
-levelImgSrcs = map ("pics/"++) [Settings.levelImageSrc, "Coin/coin.png", "Ghost/ghost.png"]
+levelImgSrcs = map ("pics/"++) [Settings.levelImageSrc, "Coin/coin.png", "Ghost/ghost-orange.png", "Ghost/ghost-purple.png"]
 
 
 playerImgSrcs :: [FilePath]

@@ -25,6 +25,9 @@ data Direction = Up | Down | Left | Right | None deriving (Eq, Enum, Bounded, Sh
 nextDir :: Direction -> Direction
 nextDir d = if d==maxBound then minBound else succ d
 
+prevDir :: Direction -> Direction
+prevDir d = if d==minBound then maxBound else pred d
+
 data GameStatus = InProgress
                 | GameOver
                 deriving (Eq, Show)

@@ -46,9 +46,11 @@ aiMove :: _ -> GameState
 aiMove (gameState,dt) = let
   isGhost o = (_name o == "ghost")
   moveGhost = S.map (\o-> if isGhost o then moveMe (fromEnum (maxBound::Direction)) (_dir o) o else o)
-  moveMe n d o = if moveObj dt d gameState o == o && n>=0 then traceShow ("cant go "++(show d)) $ moveMe (n-1) (nextDir d) o else traceShow n $ moveObj dt d gameState o
+  (r,g) = random $ _gen gameState :: (Double,_)
+  newDir = if r > 0.5 then nextDir else prevDir
+  moveMe n d o = if moveObj dt d gameState o == o && n>=0 then moveMe (n-1) (newDir d) o else moveObj dt d gameState o
  in
-  over (board.objs) moveGhost gameState
+  set gen g $ over (board.objs) moveGhost gameState
 
 trackTime :: Time -> GameState -> GameState
 trackTime t g = 
