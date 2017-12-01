@@ -30,15 +30,19 @@ update = proc (gameState, input) ->
   where
     --TODO make continuos time based motion
     useInput (gameState,input) = case input of
-         None -> set (board.player1.inMotion) False gameState
+         None -> if view (board.player1.inMotion) gameState
+                 then move (view (board.player1.dir) gameState) gameState --keep moving the same direction as before
+                 else set (board.player1.inMotion) False gameState --dont move in the beginning
          dir -> move dir gameState
 
 trackTime :: Time -> GameState -> GameState
 trackTime t g = 
   over (board.player1) (updatePlayerGif t) g
 
+-- | Check two moves ahead in case we get stuck due to rounding error or something (one pixel is not enuf to block)
 move :: Direction -> GameState -> GameState
-move d g = if wallCollision (makeMove d g) then g else makeMove d g
+move d g = if wallCollision (makeMove d g) && wallCollision (makeMove d (makeMove d g)) 
+           then g else makeMove d g
 
 --TODO maybe still relatively expensive in toList everytime, maybe cache or use fancy lenses?
 findObjCollisions :: GameState -> GameState
