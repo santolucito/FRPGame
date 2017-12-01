@@ -12,7 +12,7 @@ import Data.Hashable
 import GHC.Generics
 
 data GameObj = GameObj {
-   _position :: (Int,Int)
+   _position :: (Double,Double)
   ,_scaleFactor :: Float
   ,_display :: Bool
   ,_currentImg :: FilePath --fixed over time for static images

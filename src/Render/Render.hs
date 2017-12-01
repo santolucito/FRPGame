@@ -27,10 +27,10 @@ placeGameObjs :: GameState -> [Picture]
 placeGameObjs g = let
    os' = view (board.objs) g :: S.HashSet GameObj
    os = S.filter (_display) os'
-   (px,py) = mapTup fromIntegral $ view (board.player1.gameObj.position) g
-   myPos o = ((fromIntegral$fst$_position o),(fromIntegral$snd$_position o))
+   (px,py) = (mapTup realToFrac (view (board.player1.gameObj.position) g) :: (Float,Float))
+   myPos o = mapTup realToFrac (_position o)
    myScale o = scale (_scaleFactor o) (_scaleFactor o)
-   f o = translate (fst $myPos o-px) (snd $myPos o-py) $ myScale o $ snd $ getImg g o
+   f o = translate ((fst $myPos o)-px) ((snd $myPos o)-py) $ myScale o $ snd $ getImg g o
  in
    map f (S.toList os)
 
@@ -48,7 +48,7 @@ placePlayer g = let
 placeBkgd :: GameState -> Picture
 placeBkgd g = let
    bkgd = snd$ getImg g $ view (board.levelName) g
-   (x,y) = mapTup fromIntegral $ view (board.player1.gameObj.position) g
+   (x,y) = mapTup realToFrac$ view (board.player1.gameObj.position) g
  in
    translate (-x) (-y) bkgd
 
