@@ -1,9 +1,11 @@
+{-# LANGUAGE DeriveGeneric #-}
 
 module Types.Common where
 
 --import FRP.Yampa
 import qualified Graphics.Gloss.Interface.IO.Game as G
 
+import GHC.Generics
 
 import qualified Data.Map as M
 import Codec.Picture
@@ -18,7 +20,7 @@ blackAPixel = PixelRGBA8 0 0 0 255
 whitePixel = PixelRGB8 255 255 255
 blackImage = (\_-> generateImage (\_ _ -> blackAPixel) 10 10)
 
-data Direction = Up | Down | Left | Right | None deriving (Eq, Show)
+data Direction = Up | Down | Left | Right | None deriving (Eq, Show,Generic)
 data GameStatus = InProgress
                 | GameOver
                 deriving (Eq, Show)

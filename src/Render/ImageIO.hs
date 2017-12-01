@@ -16,15 +16,16 @@ import Data.Maybe
 --import Debug.Trace
 
 -- | Where in the file system do images come from
+--   TODO: make this automatically read the dir
 levelImgSrcs :: [FilePath]
-levelImgSrcs = map ("pics/"++) [Settings.levelImageSrc,"coin.png"]
+levelImgSrcs = map ("pics/"++) [Settings.levelImageSrc, "Coin/coin.png", "Ghost/ghost.png"]
 
 
 playerImgSrcs :: [FilePath]
 playerImgSrcs = let
   f d = map (\x-> d++"/frame_"++(show x)++"_delay-0.06s.gif") [0..9]
  in
-  map ("pics/"++) (concatMap f  ["Right", "Down", "Left", "Up"])
+  map ("pics/Player/"++) (concatMap f  ["Right", "Down", "Left", "Up"])
 
 -- | we need different images for differnet character states
 --   use a map from state names (string from file name) to image

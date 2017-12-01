@@ -24,18 +24,21 @@ instance HasImageSrc Types.GameObjs.Level where
 instance HasImageSrc Player where
   getImageSrc p = getImageSrc $ _gameObj p
 
-
+{-
 updatePlayerGif :: Double -> Player -> Player
 updatePlayerGif time p =  let
   t = if _inMotion p then time else 0 
   d = _dir p
  in
-  set (gameObj.currentImg) (getGifFrame t $ show d) p
+  set (gameObj.currentImg) (getGifFrame t $ show d) p -}
 
 updateGif :: Double -> GameObj -> GameObj
-updateGif time o = case _gifPath o of
-  Just gPath -> set currentImg (getGifFrame time gPath) o
-  Nothing -> o
+updateGif time o = let
+  t = if _inMotion o then time else 0 
+ in
+  case _gifPath o of
+    Just gPath -> set currentImg (getGifFrame t $ (gPath++(show $ _dir o))) o
+    Nothing -> o
 
 --Assume every gif (test.gif) has been expanded to
 --test_0.gif, test_1.gif, etc

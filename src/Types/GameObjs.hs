@@ -12,21 +12,25 @@ import Data.Hashable
 import GHC.Generics
 
 data GameObj = GameObj {
-   _position :: (Double,Double)
+   _name :: String
+  ,_position :: (Double,Double)
   ,_scaleFactor :: Float
   ,_display :: Bool
+  --TODO refactor to another record (gifInfo)
   ,_currentImg :: FilePath --fixed over time for static images
   ,_gifPath :: Maybe FilePath --for gifs, the top level dir where component images are found
+  ,_inMotion   :: Bool
+  ,_dir        :: Direction
 } deriving (Show,Eq,Generic)
 
+
+instance Hashable Direction
 instance Hashable GameObj
 
 data Player = Player {
   _gameObj     :: GameObj
-  ,_dir        :: Direction
   ,_score      :: Int
   ,_aliveTime  :: Double
-  ,_inMotion   :: Bool
 } deriving (Show)
 
 

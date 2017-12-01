@@ -33,14 +33,14 @@ update = proc (gameState, input) ->
   where
     --TODO make continuos time based motion
     useInput (gameState,input,dt) = case input of
-         None -> if view (board.player1.inMotion) gameState
-                 then move dt (view (board.player1.dir) gameState) gameState --keep moving the same direction as before
-                 else set (board.player1.inMotion) False gameState --dont move in the beginning
+         None -> if view (board.player1.gameObj.inMotion) gameState
+                 then move dt (view (board.player1.gameObj.dir) gameState) gameState --keep moving the same direction as before
+                 else set (board.player1.gameObj.inMotion) False gameState --dont move in the beginning
          dir -> move dt dir gameState
 
 trackTime :: Time -> GameState -> GameState
 trackTime t g = 
-  over (board.player1) (updatePlayerGif t) g
+  over (board.player1.gameObj) (updateGif t) g
 
 -- | Check two moves ahead in case we get stuck due to rounding error or something (one pixel is not enuf to block)
 -- TODO should explicity check for stuck at every turn, or figure out how to not get stuck in the first place
@@ -124,11 +124,11 @@ makeMove dt d g = let
       if abs x' > 375 then (-x',y') else (x',y')
 
     newPos = over (board.player1.gameObj.position) (appT updateF) g
-    newDir = set (board.player1.dir) d newPos
+    newDir = set (board.player1.gameObj.dir) d newPos
   in
-    set (board.player1.inMotion) True newDir
+    set (board.player1.gameObj.inMotion) True newDir
 
--- | conviences
+-- | conveniences
 
 isGameOver :: GameState -> Bool
 isGameOver s = False
