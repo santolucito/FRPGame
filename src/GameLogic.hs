@@ -76,9 +76,18 @@ findObjCollisions g = let
 updateCollide :: GameState -> GameObj -> (GameState,GameObj)
 updateCollide g o = 
   if elem ((\(x,y)->(floor x,floor y)) $ _position o) (objLocs g (view (board.player1.gameObj) g))
-  then (over (board.player1.score) (+1) g,
-        set display False o)
+  then case _name o of 
+       "ghost" ->  ghostCollide
+       "coin" -> coinCollide
+       otherwise -> (traceShow  $ "unhandled collision with"++_name o) (g,o)
   else (g,o)
+ where
+  coinCollide = 
+        (over (board.player1.score) (+1) g,
+        set display False o)
+  ghostCollide =
+        (set (status) GameOver g,
+         o)
 
 wallCollision :: GameState -> GameObj -> Bool
 wallCollision gs o = let
@@ -139,6 +148,6 @@ pixelAtFromCenter i x y = let
 -- | conveniences
 
 isGameOver :: GameState -> Bool
-isGameOver s = False
+isGameOver g = _status g == GameOver
 
 traceMe x = traceShow x x
