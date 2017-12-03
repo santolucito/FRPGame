@@ -6,6 +6,7 @@ import qualified Data.HashSet as S
 import Graphics.Gloss
 
 import Types.GameObjs
+import Types.Common
 import FRP.Yampa
 import Render.ImageIO
 
@@ -54,8 +55,12 @@ placeBkgd g = let
    translate (-x) (-y) bkgd
 
 placeText :: GameState -> Picture
-placeText g = 
-   translate (50) (120) $ text $ show $ (_score._player1._board) g
+placeText g = let
+   t = if _status g == GameOver then "Game Over!" else show $ (_score._player1._board) g
+ in 
+   translate 0 (200) $ 
+     (color (greyN 0.8) $ rectangleSolid 200 100) <>
+     (translate (-30) (-40) $ scale (0.5) (0.5) $ text t)
 
 mapTup :: (a -> b) -> (a, a) -> (b, b)
 mapTup f (a1, a2) = (f a1, f a2)
