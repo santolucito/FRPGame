@@ -34,7 +34,7 @@ placeGameObjs g = let
    myScale o = scale (_scaleFactor o) (_scaleFactor o)
    f o = translate ((fst $myPos o)-px) ((snd $myPos o)-py) $ myScale o $ snd $ getImg g o
  in
-   map f (S.toList os)
+   reverse $ map f (S.toList os) -- need to reverse to get ghosts on top for some reason
 
 -- | keep the player centered at all times
 --   TODO merge this with placeGameObjs
@@ -58,7 +58,7 @@ placeText :: GameState -> Picture
 placeText g = let
    t = if _status g == GameOver then "Game Over!" else show $ (_score._player1._board) g
  in 
-   translate 0 (200) $ 
+   translate 300 260 $ 
      (color (greyN 0.8) $ rectangleSolid 200 100) <>
      (translate (-30) (-40) $ scale (0.5) (0.5) $ text t)
 
