@@ -37,19 +37,19 @@ emptyBoard is = Board {
    ,_aliveTime= 0
    ,_score    = 0}
  ,_objs = S.fromList (
-           map (uncurry makeCoin) coinPos ++
-           (map makeGhost $ [(130,0,"orange"),(-130,100,"orange"),(-130,20,"purple")])
+           map (uncurry makeCoin) coinPos
+           ++ (map makeGhost $ [(130,0,"orange"),(-130,100,"orange"),(-130,20,"purple")])
           )
  ,_levelName = Level Settings.levelImageSrc
 }
 
-coinPos =[
-  (-120,100),(-120,25),(-120,-50),
-  (120,100),(120,25),(120,-50),
-  (-60,-50),(0,-50),(60,-50),
-  (-60,100),(0,100),(60,100)]
-  ++  
-  [(x,y) | x <- [-200,200], y <- [-116,-65..340]]
+coinPos =
+     line 338 ++ line 280 ++ line 200 ++ line 120 ++ line 40
+ where
+  line x = [(x',y) | x' <- [-x,x]  , y <- [-bottom,-bottom+(coinSpace)..top]]
+  coinSpace = 73
+  top = 280
+  bottom = 340
 makeCoin x y = GameObj {
    _name = "coin"
   ,_position = (x,y)

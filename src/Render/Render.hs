@@ -58,7 +58,7 @@ placeText :: GameState -> Picture
 placeText g = let
    t = if _status g == GameOver then "Game Over!" else show $ (_score._player1._board) g
  in 
-   translate 300 260 $ 
+   translate (-300) 260 $ 
      (color (greyN 0.8) $ rectangleSolid 200 100) <>
      (translate (-30) (-40) $ scale (0.5) (0.5) $ text t)
 
