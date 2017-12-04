@@ -31,7 +31,8 @@ update = proc (gameState, input) ->
     movedPlayer <- arr useInput -< (gs,input,t-t')
     movedGhosts <- arr aiMove -< (movedPlayer,t-t')
     collisons <- arr findObjCollisions -< movedGhosts
-    returnA -< collisons
+    newgs <- arr (\g-> if view (board.player1.score) g == (num (view (board.level) g) *2) then g {_status = LevelUp} else g) -< collisons
+    returnA -< newgs
   where
   
 --TODO make continuos time based motion
@@ -94,7 +95,7 @@ updateCollide g o =
 
 wallCollision :: GameState -> GameObj -> Bool
 wallCollision gs o = let
-  walls = fst $ getImg gs $ view (board.levelName) gs
+  walls = fst $ getImg gs $ view (board.level) gs
   boardPixels = map (\(x,y) -> pixelAtFromCenter walls x y) (objLocs gs o)
  in 
   any (==blackAPixel) (boardPixels)
@@ -153,4 +154,6 @@ pixelAtFromCenter i x y = let
 isGameOver :: GameState -> Bool
 isGameOver g = _status g == GameOver
 
-traceMe x = traceShow x x
+leveledUp :: GameState -> Bool
+leveledUp g = _status g == LevelUp
+

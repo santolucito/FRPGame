@@ -49,14 +49,18 @@ placePlayer g = let
 -- | move the background around the player
 placeBkgd :: GameState -> Picture
 placeBkgd g = let
-   bkgd = snd$ getImg g $ view (board.levelName) g
+   bkgd = snd$ getImg g $ view (board.level) g
    (x,y) = mapTup realToFrac$ view (board.player1.gameObj.position) g
  in
    translate (-x) (-y) bkgd
 
 placeText :: GameState -> Picture
 placeText g = let
-   t = if _status g == GameOver then "Game Over!" else "Score:"++ (show $ (_score._player1._board) g)
+   --TODO move to GameLogic
+   t = case _status g of 
+     GameOver -> "Game Over!" 
+     LevelUp -> "Level Up"
+     InProgress -> "Score:"++ (show $ (_score._player1._board) g)
  in 
    translate (-300) 260 $ 
      (color (greyN 0.95) $ rectangleSolid 600 80) <>

@@ -4,6 +4,7 @@
 module Main where
 
 import GameController
+import InitGameState 
 import Types.Common
 
 import Render.Render 
@@ -47,4 +48,4 @@ playGame =do
 -- Gloss' Picture
 mainSF :: StdGen -> ImageMap -> SF (Event InputEvent) G.Picture
 mainSF g is = 
-  parseInput >>> wholeGame g is >>> drawGame
+  parseInput >>> wholeGame g is (initialState g is) >>> drawGame

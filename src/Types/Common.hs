@@ -30,8 +30,12 @@ prevDir d = if d==minBound then maxBound else pred d
 
 data GameStatus = InProgress
                 | GameOver
+                | LevelUp
                 deriving (Eq, Show)
 
+data Level = Level {
+  num::Int,
+  datapath::String} deriving Show
 
 type GameInput = Direction
 --type GameInput = Event Direction

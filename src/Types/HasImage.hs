@@ -1,6 +1,7 @@
 module Types.HasImage where
 
 import Types.GameObjs
+import Types.Common
 import Settings
 
 import Control.Lens
@@ -18,8 +19,8 @@ class HasImageSrc a where
 instance HasImageSrc GameObj where
   getImageSrc o = _currentImg o
  
-instance HasImageSrc Types.GameObjs.Level where
-  getImageSrc (Level s) = s
+instance HasImageSrc Types.Common.Level where
+  getImageSrc l = datapath l
 
 instance HasImageSrc Player where
   getImageSrc p = getImageSrc $ _gameObj p

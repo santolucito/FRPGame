@@ -34,10 +34,9 @@ data Player = Player {
 } deriving (Show)
 
 
-data Level = Level String deriving Show
 data Board = Board {
    _player1   :: Player
-  ,_levelName :: Level
+  ,_level     :: Level
   ,_objs      :: HashSet GameObj
 } deriving (Show)
 

@@ -24,32 +24,35 @@ initialState g is = GameState {
   ,_images = is
 }
 
+initPlayer = Player {
+  _gameObj  = GameObj {
+    _name = "player"
+    ,_dir      = Left
+    ,_inMotion = False
+    ,_position = (0,25)
+    ,_scaleFactor = 1.6
+    ,_currentImg = ""
+    ,_gifPath = Just "Player/"
+    ,_display = True}
+  ,_aliveTime= 0
+  ,_score    = 0}
+
 emptyBoard is = Board {
-  _player1 = Player {
-    _gameObj  = GameObj {
-      _name = "player"
-     ,_dir      = Left
-     ,_inMotion = False
-     ,_position = (0,25)
-     ,_scaleFactor = 1.6
-     ,_currentImg = ""
-     ,_gifPath = Just "Player/"
-     ,_display = True}
-   ,_aliveTime= 0
-   ,_score    = 0}
- ,_objs = S.fromList (
-           map (uncurry makeCoin) coinPos
-           ++ (map makeGhost $ [
-                (130,0,"orange"),
-                (-130,100,"orange"),
-                (-130,20,"purple"),
-                (130,20,"purple")
-                ])
-          )
- ,_levelName = Level Settings.levelImageSrc
+  _player1 = initPlayer
+ ,_objs = initObjs
+ ,_level = Level {num=1,datapath=Settings.levelImageSrc}
 }
 
-traceMe x = traceShow x x 
+initObjs = S.fromList (
+   map (uncurry makeCoin) coinPos
+   ++ (map makeGhost $ [
+	(130,0,"orange"),
+	(-130,100,"orange"),
+	(-130,20,"purple"),
+	(130,20,"purple")
+	])
+  )
+
 coinPos =
      filter (\c-> c/=(40,25) && c/=(-40,25) && 
                   c/=(338,98) && c/=(280,98) &&
