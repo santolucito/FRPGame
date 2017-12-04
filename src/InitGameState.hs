@@ -39,17 +39,21 @@ initPlayer = Player {
 
 emptyBoard is = Board {
   _player1 = initPlayer
- ,_objs = initObjs
- ,_level = Level {num=1,datapath=Settings.levelImageSrc}
+ ,_objs = initObjs 4
+ ,_level = Level {_num=1,_datapath=Settings.levelImageSrc}
 }
 
-initObjs = S.fromList (
+initObjs n = S.fromList (
    map (uncurry makeCoin) coinPos
-   ++ (map makeGhost $ [
+   ++ (map makeGhost $ take n [
 	(130,0,"orange"),
 	(-130,100,"orange"),
 	(-130,20,"purple"),
-	(130,20,"purple")
+	(130,20,"purple"),
+	(133,20,"purple"),
+	(136,20,"purple"),
+	(139,20,"purple"),
+	(145,20,"purple")--TODO, gnerate rather than hard code
 	])
   )
 
@@ -65,6 +69,7 @@ coinPos =
   coinSpace = 73
   top = 280
   bottom = 340
+
 makeCoin x y = GameObj {
    _name = "coin"
   ,_position = (x,y)

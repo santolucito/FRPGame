@@ -31,7 +31,7 @@ update = proc (gameState, input) ->
     movedPlayer <- arr useInput -< (gs,input,t-t')
     movedGhosts <- arr aiMove -< (movedPlayer,t-t')
     collisons <- arr findObjCollisions -< movedGhosts
-    newgs <- arr (\g-> if view (board.player1.score) g == (num (view (board.level) g) *2) then g {_status = LevelUp} else g) -< collisons
+    newgs <- arr (\g-> if view (board.player1.score) g == ((view (board.level.num) g) *2) then g {_status = LevelUp} else g) -< collisons
     returnA -< newgs
   where
   

@@ -49,8 +49,14 @@ data GameState = GameState {
    , _images :: ImageMap
    }
 
+data Level = Level {
+  _num::Int,
+  _datapath::String} deriving Show
+
+
 makeLenses ''GameObj
 makeLenses ''GameState
 makeLenses ''Board
 makeLenses ''Player
+makeLenses ''Level
 

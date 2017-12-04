@@ -55,10 +55,10 @@ changeLevel g is gs = case _status gs of
   InProgress -> undefined --shouldnt happen
  where
   savedLevel = 
-    over (board.level) (\l-> Level{num=1+num l,datapath=datapath l}) $
+    over (board.level) (\l-> Level{_num=1+_num l,_datapath=_datapath l}) $
     set status InProgress $
     set (board.player1.gameObj.position) (view (gameObj.position) initPlayer) $
-    set (board.objs) initObjs gs
+    set (board.objs) (initObjs ((view (board.level.num) gs)+4)) gs
 -- | When we have lost the game we want to keep the board in a state that
 -- the user reached and show some GameOver message over it
 gameOver :: GameState -> SF a GameState

@@ -33,9 +33,6 @@ data GameStatus = InProgress
                 | LevelUp
                 deriving (Eq, Show)
 
-data Level = Level {
-  num::Int,
-  datapath::String} deriving Show
 
 type GameInput = Direction
 --type GameInput = Event Direction

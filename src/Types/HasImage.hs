@@ -19,8 +19,8 @@ class HasImageSrc a where
 instance HasImageSrc GameObj where
   getImageSrc o = _currentImg o
  
-instance HasImageSrc Types.Common.Level where
-  getImageSrc l = datapath l
+instance HasImageSrc Types.GameObjs.Level where
+  getImageSrc l = _datapath l
 
 instance HasImageSrc Player where
   getImageSrc p = getImageSrc $ _gameObj p
