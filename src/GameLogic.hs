@@ -43,13 +43,15 @@ useInput (gameState,input,dt) = case input of
   --dir -> traceShow (view (board.player1.gameObj.position) gameState) $ over (board.player1.gameObj) (moveObj dt dir gameState) gameState
   dir -> over (board.player1.gameObj) (moveObj dt dir gameState) gameState
 
+-- TODO doesnt reset the randGen until the move is over
+-- so every ai uses the same randGen within each move 
 aiMove :: _ -> GameState
 aiMove (gameState,dt) = let
   isGhost o = (_name o == "ghost")
   moveGhost = S.map (\o-> if isGhost o then moveMe (fromEnum (maxBound::Direction)) (_dir o) o else o)
   (r,g) = random $ _gen gameState :: (Double,_)
-  newDir = if r > 0.5 then nextDir else prevDir
-  moveMe n d o = if moveObj dt d gameState o == o && n>=0 then moveMe (n-1) (newDir d) o else moveObj dt d gameState o
+  newDir = toEnum $ floor (r*(fromIntegral $ fromEnum (maxBound::Direction)))
+  moveMe n d o = if moveObj dt d gameState o == o && n>=0 then moveMe (n-1) (newDir) o else moveObj dt d gameState o
  in
   set gen g $ over (board.objs) moveGhost gameState
 
