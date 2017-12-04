@@ -40,7 +40,7 @@ useInput (gameState,input,dt) = case input of
   None -> if view (board.player1.gameObj.inMotion) gameState
             then over (board.player1.gameObj) (moveObj dt (view (board.player1.gameObj.dir) gameState) gameState) gameState --keep moving the same direction as before
             else set (board.player1.gameObj.inMotion) False gameState --dont move in the beginning
-  dir -> traceShow (view (board.player1.gameObj.position) gameState) $ over (board.player1.gameObj) (moveObj dt dir gameState) gameState
+  --dir -> traceShow (view (board.player1.gameObj.position) gameState) $ over (board.player1.gameObj) (moveObj dt dir gameState) gameState
   dir -> over (board.player1.gameObj) (moveObj dt dir gameState) gameState
 
 aiMove :: _ -> GameState

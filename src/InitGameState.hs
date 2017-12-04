@@ -13,6 +13,7 @@ import Codec.Picture
 import qualified Data.HashSet as S
 
 import Settings
+import Debug.Trace
 
 
 initialState :: StdGen -> ImageMap -> GameState 
@@ -29,7 +30,7 @@ emptyBoard is = Board {
       _name = "player"
      ,_dir      = Left
      ,_inMotion = False
-     ,_position = (0,0)
+     ,_position = (0,25)
      ,_scaleFactor = 1.6
      ,_currentImg = ""
      ,_gifPath = Just "Player/"
@@ -38,13 +39,24 @@ emptyBoard is = Board {
    ,_score    = 0}
  ,_objs = S.fromList (
            map (uncurry makeCoin) coinPos
-           ++ (map makeGhost $ [(130,0,"orange"),(-130,100,"orange"),(-130,20,"purple")])
+           ++ (map makeGhost $ [
+                (130,0,"orange"),
+                (-130,100,"orange"),
+                (-130,20,"purple"),
+                (130,20,"purple")
+                ])
           )
  ,_levelName = Level Settings.levelImageSrc
 }
 
+traceMe x = traceShow x x 
 coinPos =
-     line 338 ++ line 280 ++ line 200 ++ line 120 ++ line 40
+     filter (\c-> c/=(40,25) && c/=(-40,25) && 
+                  c/=(338,98) && c/=(280,98) &&
+                  c/=(-338,98) && c/=(-280,98) &&
+                  c/=(338,-48) && c/=(280,-48) &&
+                  c/=(-338,-48) && c/=(-280,-48))
+     $  line 338 ++ line 280 ++ line 200 ++ line 120 ++ line 40
  where
   line x = [(x',y) | x' <- [-x,x]  , y <- [-bottom,-bottom+(coinSpace)..top]]
   coinSpace = 73
@@ -64,7 +76,7 @@ makeCoin x y = GameObj {
 makeGhost (x,y,color) = GameObj {
    _name = "ghost"
   ,_position = (x,y)
-  ,_scaleFactor = 0.15
+  ,_scaleFactor = 0.2
   ,_display = True
   ,_currentImg = "Ghost/ghost-"++color++".png"
   ,_gifPath = Nothing
