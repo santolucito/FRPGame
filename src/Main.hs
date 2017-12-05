@@ -19,9 +19,14 @@ import Data.Map (union)
 import System.Random (newStdGen, StdGen)
 
 import qualified Settings
+import GHC.IO.Encoding
 
 main :: IO()
-main = playGame
+main = do
+  setLocaleEncoding utf8
+  setFileSystemEncoding utf8
+  setForeignEncoding utf8  
+  playGame
 
 -- | load a random numbe gen
 --   NB : read in every image we will ever need

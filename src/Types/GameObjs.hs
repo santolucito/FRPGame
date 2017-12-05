@@ -28,7 +28,7 @@ instance Hashable Direction
 instance Hashable GameObj
 
 data Player = Player {
-  _gameObj     :: GameObj
+   _gameObj     :: GameObj
   ,_score      :: Int
   ,_aliveTime  :: Double
 } deriving (Show)
@@ -47,6 +47,7 @@ data GameState = GameState {
    , _status :: GameStatus
    , _gen :: StdGen
    , _images :: ImageMap
+   , _highscore :: Int --TODO how can i make this more general (file refrence maybe?)
    }
 
 data Level = Level {

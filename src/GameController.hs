@@ -48,7 +48,7 @@ changeLevel :: StdGen -> ImageMap -> GameState -> SF GameInput GameState
 changeLevel g is gs = case _status gs of
   GameOver -> switch
     (gameOver gs &&& after 5 ())
-    (const $ wholeGame g is (initialState g is))
+    (const $ wholeGame g is (set highscore (_highscore gs) $ initialState g is))
   LevelUp -> switch
     (leveling gs &&& after 5 ())
     (const $ wholeGame g is savedLevel) --if you level up, keep some info from last level
@@ -57,8 +57,10 @@ changeLevel g is gs = case _status gs of
   savedLevel = 
     over (board.level) (\l-> Level{_num=1+_num l,_datapath=_datapath l}) $
     set status InProgress $
+    set (board.player1.gameObj.dir) None $
     set (board.player1.gameObj.position) (view (gameObj.position) initPlayer) $
     set (board.objs) (initObjs ((view (board.level.num) gs)+4)) gs
+
 -- | When we have lost the game we want to keep the board in a state that
 -- the user reached and show some GameOver message over it
 gameOver :: GameState -> SF a GameState

@@ -108,16 +108,16 @@ makeMove dt d o = let
      Up    -> (0,s)
      Left  -> (-s,0)
      Right -> (s,0)
-     _     -> (0,0)
+     None  -> (0,0)
     appT (dx,dy) (x,y) = let
       (x',y') = (x+dx,y+dy)
      in
       if abs x' > 375 then (-x',y') else (x',y')
-
+    motion = d/=None
     objWithNewPos = over (position) (appT updateF) o
     objWithNewDir = set (dir) d objWithNewPos
   in
-    set (inMotion) True objWithNewDir
+    set (inMotion) motion objWithNewDir
 
 
 --TODO for pixel level detection
