@@ -39,7 +39,7 @@ initPlayer = Player {
 
 emptyBoard is = Board {
   _player1 = initPlayer
- ,_objs = initObjs 4
+ ,_objs = initObjs 10
  ,_level = Level {_num=1,_datapath=Settings.levelImageSrc}
 }
 
@@ -47,13 +47,13 @@ initObjs n = S.fromList (
    map (uncurry makeCoin) coinPos
    ++ (map makeGhost $ take n [
 	(130,0,"orange"),
-	(-130,100,"orange"),
+	(-130,80,"orange"),
 	(-130,20,"purple"),
 	(130,20,"purple"),
-	(133,20,"purple"),
-	(136,20,"purple"),
-	(139,20,"purple"),
-	(145,20,"purple")--TODO, gnerate rather than hard code
+	(-130,80,"purple"),
+	(131,40,"orange"),
+	(-139,20,"purple"),
+	(145,20,"orange")--TODO, gnerate rather than hard code
 	])
   )
 
