@@ -29,7 +29,7 @@ initPlayer = Player {
     _name = "player"
     ,_dir      = None
     ,_inMotion = False
-    ,_position = (0,25)
+    ,_position = (-100,50)
     ,_scaleFactor = 1.6
     ,_currentImg = ""
     ,_gifPath = Just "Player/"
@@ -39,13 +39,13 @@ initPlayer = Player {
 
 emptyBoard is = Board {
   _player1 = initPlayer
- ,_objs = initObjs 10
+ ,_objs = initObjs 3
  ,_level = Level {_num=1,_datapath=Settings.levelImageSrc}
 }
 
 initObjs n = S.fromList (
-   map (uncurry makeCoin) coinPos
-   ++ (map makeGhost $ take n [
+   --map (uncurry makeCoin) coinPos
+   (map makeGhost $ take n [
 	(130,0,"orange"),
 	(-130,80,"orange"),
 	(-130,20,"purple"),

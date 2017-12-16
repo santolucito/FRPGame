@@ -38,10 +38,7 @@ update = proc (gameState, input) ->
 --TODO make continuos time based motion
 useInput :: _ -> GameState
 useInput (gameState,input,dt) = case input of
-  None -> if view (board.player1.gameObj.inMotion) gameState
-            then over (board.player1.gameObj) (moveObj dt (view (board.player1.gameObj.dir) gameState) gameState) gameState --keep moving the same direction as before
-            else set (board.player1.gameObj.inMotion) False gameState --dont move in the beginning
-  --dir -> traceShow (view (board.player1.gameObj.position) gameState) $ over (board.player1.gameObj) (moveObj dt dir gameState) gameState
+  None -> set (board.player1.gameObj.inMotion) False gameState
   dir -> over (board.player1.gameObj) (moveObj dt dir gameState) gameState
 
 -- TODO doesnt reset the randGen until the move is over
@@ -109,10 +106,7 @@ makeMove dt d o = let
      Left  -> (-s,0)
      Right -> (s,0)
      None  -> (0,0)
-    appT (dx,dy) (x,y) = let
-      (x',y') = (x+dx,y+dy)
-     in
-      if abs x' > 375 then (-x',y') else (x',y')
+    appT (dx,dy) (x,y) = (x+dx,y+dy)
     motion = d/=None
     objWithNewPos = over (position) (appT updateF) o
     objWithNewDir = set (dir) d objWithNewPos
