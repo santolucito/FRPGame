@@ -20,7 +20,7 @@ instance HasImageSrc GameObj where
   getImageSrc o = _currentImg o
  
 instance HasImageSrc Types.GameObjs.Level where
-  getImageSrc l = _datapath l
+  getImageSrc l = _collisionImage l --or displayImage?
 
 instance HasImageSrc Player where
   getImageSrc p = getImageSrc $ _gameObj p

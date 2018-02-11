@@ -52,7 +52,13 @@ aiMove (gameState,dt) = let
   moveGhost = S.map (\o-> if isGhost o then moveMe (fromEnum (maxBound::Direction)) (_dir o) o else o)
   (r,g) = random $ _gen gameState :: (Double,_)
   newDir = toEnum $ floor (r*(fromIntegral $ fromEnum (maxBound::Direction)))
-  moveMe n d o = if moveObj dt d gameState o == o && n>=0 then moveMe (n-1) (newDir) o else moveObj dt d gameState o
+  moveMe n d o = 
+    if moveObj dt d gameState o == o && n>0 
+    then moveMe (n-1) (newDir) o 
+    else moveObj dt d gameState o
+         --if n /= 0
+         --then moveObj dt d gameState o
+         --else makeMove dt d o
  in
   set gen g $ over (board.objs) moveGhost gameState
 
@@ -76,7 +82,9 @@ findObjCollisions g = let
  in 
   set (board.objs) (S.fromList objs') g'
 
---what happens to an obj when the player collides with it
+-- | If any of the pixels of an object overlap with 
+--   any of the positions of the player, generate a new state and object
+--   TODO, why not just return the new gameState?
 updateCollide :: GameState -> GameObj -> (GameState,GameObj)
 updateCollide g o = 
   if elem ((\(x,y)->(floor x,floor y)) $ _position o) (objLocs g (view (board.player1.gameObj) g))
@@ -121,7 +129,7 @@ makeMove dt d o = let
 
 
 --TODO for pixel level detection
---rather than building rect, get positions of all nonalpha pixels
+--rather than building rect, get positions of all nonalpha pixels (might be a problem for gifs tho)
 objLocs ::GameState -> GameObj -> [(Int,Int)]
 objLocs g obj = let
   (x,y,xsize,ysize) = objectDims g obj

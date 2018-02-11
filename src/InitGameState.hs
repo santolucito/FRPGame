@@ -39,8 +39,8 @@ initPlayer = Player {
 
 emptyBoard is = Board {
   _player1 = initPlayer
- ,_objs = initObjs 10
- ,_level = Level {_num=1,_datapath=Settings.levelImageSrc}
+ ,_objs = initObjs 3
+ ,_level = Level {_num=1,_displayImage=Settings.levelImageSrc,_collisionImage=Settings.levelImageSrc}
 }
 
 initObjs n = S.fromList (
