@@ -23,10 +23,16 @@ parseInput = proc keys -> do
   right <- accumHoldBy (readKey $ G.SpecialKey G.KeyRight) False -< keys
   returnA -< calcDir (up,down,left,right)
  where
-  readKey k lastVal event = case event of  --k can t be passed as a paramneter here for some reason
-    (G.EventKey (G.SpecialKey G.KeyLeft) G.Down _ _) -> traceShow event True
-    (G.EventKey k G.Up _ _)   -> False
-    _                         -> False
+  -- events oocasionally come out of order (up/down rather than down/up) causing key to 'remain down'
+  -- TODO add timestamps to avoid
+  readKey k lastVal event = if 
+    | getK event == Just (k, G.Up) -> False
+    | getK event == Just (k, G.Down) -> True 
+    | otherwise                      -> lastVal
+  getK (G.EventKey k d _ _ ) = Just (k,d)
+  getK _ = Nothing
+
+  -- TODO prioritized up/down over left/right, fix with timestamps
   calcDir (up,down,left,right) = if 
     | up    ->  T.Up
     | down  ->  T.Down
