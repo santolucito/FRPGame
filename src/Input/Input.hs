@@ -21,7 +21,8 @@ parseInput = proc keys -> do
   down  <- accumHoldBy (readKey $ G.SpecialKey G.KeyDown) False  -< keys
   left  <- accumHoldBy (readKey $ G.SpecialKey G.KeyLeft) False  -< keys
   right <- accumHoldBy (readKey $ G.SpecialKey G.KeyRight) False -< keys
-  returnA -< calcDir (up,down,left,right)
+  enter <- accumHoldBy (readKey $ G.SpecialKey G.KeyEnter) False -< keys
+  returnA -< calcDir (up,down,left,right,enter)
  where
   -- events oocasionally come out of order (up/down rather than down/up) causing key to 'remain down'
   -- TODO add timestamps to avoid
@@ -32,7 +33,7 @@ parseInput = proc keys -> do
   getK (G.EventKey k d _ _ ) = Just (k,d)
   getK _ = Nothing
 
-  calcDir (up,down,left,right) = if 
+  calcDir (up,down,left,right,enter) = if 
     | up && left    ->  T.UpLeft
     | up && right   ->  T.UpRight
     | down && left  ->  T.DownLeft
@@ -41,4 +42,5 @@ parseInput = proc keys -> do
     | down          ->  T.Down
     | left          ->  T.Left
     | right         ->  T.Right
+    | enter         ->  T.Enter --TODO this isnt really a direction...
     | True          ->  T.None

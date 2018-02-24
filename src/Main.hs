@@ -33,7 +33,6 @@ main = do
 --   this might use up too much memor if the game uses many images since we have no way to evict an image (I think)
 playGame :: IO ()
 playGame =do
-  do
     g <- newStdGen
 
     levelImgs <- makeImgMap levelImgSrcs

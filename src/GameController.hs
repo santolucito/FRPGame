@@ -10,11 +10,14 @@ import System.Random (StdGen)
 import FRP.Yampa
 
 import Types.Common
+import Utils
 import Types.GameObjs
-import GameLogic
+import qualified GameLogic
+import qualified InterfaceLogic
 import InitGameState
 
 import Control.Lens
+import Debug.Trace
 
 -- | Run the game while the player ('notDead')
 -- when the player ('lostGame'), then ('restartGame')
@@ -33,14 +36,21 @@ runLevel state = proc input -> do
       updatedState <- update -< (currentState, input)
   returnA -< updatedState --currentState
 
+update :: SF (GameState, GameInput) GameState
+update = proc (gs,gi) -> do
+  nextGs <- if showInterface gs
+            then InterfaceLogic.update -< (gs,gi)
+            else GameLogic.update      -< (gs,gi)
+  returnA -< nextGs
+
 
 levelEvent :: SF GameState (Event GameState)
 levelEvent = proc s -> do
-  lUp  <- edge -< leveledUp s
   lost <- edge -< isGameOver s
-  let levelSnap = lUp `tag` s
+  lUp  <- edge -< leveledUp s
   let lostSnap  = lost `tag` s
-  returnA -< lMerge lostSnap levelSnap 
+  let levelSnap = lUp `tag` s
+  returnA -< mergeEvents [lostSnap, levelSnap]
 
 -- | When the game is lost we want to show the GameOver text for some time
 -- and then restart the game
@@ -52,7 +62,8 @@ changeLevel g is gs = case _status gs of
   LevelUp -> switch
     (leveling gs &&& after 5 ())
     (const $ wholeGame g is savedLevel) --if you level up, keep some info from last level
-  InProgress -> undefined --shouldnt happen
+  InProgress -> error "Tried to change level while InProgress" 
+  ShowInterface -> error "Tried to change level while ShowInterface"
  where
   savedLevel = 
     over (board.level) (\l-> Level{_num=1+_num l,_datapath=_datapath l}) $

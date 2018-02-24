@@ -5,6 +5,7 @@ import Data.Monoid
 import qualified Data.HashSet as S
 import Graphics.Gloss
 
+import Utils
 import Types.GameObjs
 import Types.Common
 import FRP.Yampa
@@ -17,12 +18,17 @@ import Control.Lens (view)
 drawGame :: SF GameState Picture
 drawGame = arr renderState
 
+-- | render in 'bottom' to 'top' order
+--   (ie placeBkgs is the bottom layer)
+-- TODO use getScreenSize and make this IO
 renderState :: GameState -> Picture
-renderState s = 
-  placeBkgd s <>
-  placePlayer s <>
-  (mconcat $ placeGameObjs s) <>
-  placeText s
+renderState s = pictures [
+    placeBkgd s
+  , placePlayer s
+  , (mconcat $ placeGameObjs s)
+  , placeText s
+  , (if showInterface s then placeInterface s else blank)
+  ]
 
 --TODO major refactoring needed here
 placeGameObjs :: GameState -> [Picture]
@@ -56,15 +62,24 @@ placeBkgd g = let
 
 placeText :: GameState -> Picture
 placeText g = let
-   --TODO move to GameLogic
+   --TODO move to GameLogic (add text field to GameState?)
    t = case _status g of 
      GameOver -> "Game Over!" 
      LevelUp -> "Level Up"
      InProgress -> "Score:"++ (show $ (_score._player1._board) g)
+     ShowInterface -> "Paused"
  in 
+   -- TODO dont hardcode position values - make relative to window size
    translate (-300) 260 $ 
      (color (greyN 0.95) $ rectangleSolid 600 80) <>
      (translate (-90) (-20) $ scale (0.5) (0.5) $ text t)
+
+placeInterface :: GameState -> Picture
+placeInterface g =
+   translate 0 (-260) $ 
+     (color (greyN 0.90) $ rectangleSolid 600 80) <>
+     (translate (-300) (-20) $ scale (0.5) (0.5) $ text "Interface Goes Here")
+      
 
 mapTup :: (a -> b) -> (a, a) -> (b, b)
 mapTup f (a1, a2) = (f a1, f a2)

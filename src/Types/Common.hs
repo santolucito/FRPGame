@@ -20,10 +20,11 @@ blackAPixel = PixelRGBA8 0 0 0 255
 whitePixel = PixelRGB8 255 255 255
 blackImage = (\_-> generateImage (\_ _ -> blackAPixel) 10 10)
 
+--TODO should i separate movement and interface controls?
 data Direction = 
   Up | Down | Left | Right |
   UpLeft | UpRight | DownLeft | DownRight | 
-  None 
+  Enter | None 
   deriving (Eq, Enum, Bounded, Show, Generic)
 
 nextDir :: Direction -> Direction
@@ -35,6 +36,7 @@ prevDir d = if d==minBound then maxBound else pred d
 data GameStatus = InProgress
                 | GameOver
                 | LevelUp
+                | ShowInterface 
                 deriving (Eq, Show)
 
 

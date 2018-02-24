@@ -5,6 +5,7 @@
 module Types.GameObjs where
 
 import Types.Common
+import Types.Interface
 import Control.Lens (makeLenses)
 import System.Random
 import Data.HashSet
@@ -41,12 +42,12 @@ data Board = Board {
 } deriving (Show)
 
 
-
 data GameState = GameState { 
      _board :: Board
    , _status :: GameStatus
    , _gen :: StdGen
    , _images :: ImageMap
+   , _interface :: Interface
    , _highscore :: Int --TODO how can i make this more general (file refrence maybe?)
    }
 

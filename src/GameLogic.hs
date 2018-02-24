@@ -18,6 +18,7 @@ import qualified Data.HashSet as S
 
 import FRP.Yampa
 
+import Utils
 import qualified Settings
 import Debug.Trace
 
@@ -25,7 +26,7 @@ update :: SF (GameState, GameInput) GameState
 update = proc (gameState, input) -> 
   do
     rec 
-      t <- time -< ()
+      t <- time -< () --TODO isnt there a way to directly get the delta times out of an arrow?
       t' <- iPre 0 -< t
     gs <- arr (uncurry trackTime) -< (t, gameState)
     movedPlayer <- arr useInput -< (gs,input,t-t')
@@ -87,7 +88,7 @@ updateCollide g o =
         (over (board.player1.score) (+1) g,
         set display False o)
   ghostCollide =
-        (set (status) GameOver g,
+        (set (status) ShowInterface g,
          o)
 
 wallCollision :: GameState -> GameObj -> Bool
@@ -109,7 +110,7 @@ makeMove dt d o = let
      Down       -> (0,-s)
      Left       -> (-s,0)
      Right      -> (s,0)
-     None       -> (0,0)
+     _       -> (0,0)
     diag (x,y) = (x/1.4,y/1.4)
     appT (dx,dy) (x,y) = (x+dx,y+dy)
     motion = d/=None
@@ -148,11 +149,4 @@ pixelAtFromCenter i x y = let
   pixelAt i x' y'
   --whitePixel
 
--- | conveniences
-
-isGameOver :: GameState -> Bool
-isGameOver g = _status g == GameOver
-
-leveledUp :: GameState -> Bool
-leveledUp g = _status g == LevelUp
 
