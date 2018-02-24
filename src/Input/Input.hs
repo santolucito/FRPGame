@@ -32,10 +32,13 @@ parseInput = proc keys -> do
   getK (G.EventKey k d _ _ ) = Just (k,d)
   getK _ = Nothing
 
-  -- TODO prioritized up/down over left/right, fix with timestamps
   calcDir (up,down,left,right) = if 
-    | up    ->  T.Up
-    | down  ->  T.Down
-    | left  ->  T.Left
-    | right ->  T.Right
-    | True  ->  T.None
+    | up && left    ->  T.UpLeft
+    | up && right   ->  T.UpRight
+    | down && left  ->  T.DownLeft
+    | down && right ->  T.DownRight
+    | up            ->  T.Up
+    | down          ->  T.Down
+    | left          ->  T.Left
+    | right         ->  T.Right
+    | True          ->  T.None

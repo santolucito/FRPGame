@@ -25,7 +25,7 @@ playerImgSrcs :: [FilePath]
 playerImgSrcs = let
   f d = map (\x-> d++"/frame_"++(show x)++"_delay-0.06s.gif") [0..9]
  in
-  map ("pics/Player/"++) (concatMap f  ["Right", "Down", "Left", "Up","None"])--TODO ensure all these frames exist
+  map ("pics/Player/"++) (concatMap f  ["Right", "Down", "Left", "Up", "UpLeft", "UpRight", "DownLeft", "DownRight", "None"])--TODO ensure all these frames exist
 
 -- | we need different images for differnet character states
 --   use a map from state names (string from file name) to image
@@ -45,6 +45,6 @@ getImg g o = let
   allImgs =  _images g
   myImg = M.lookup (Settings.imageDir ++ s) allImgs
  in
-  fromMaybe (error (("Could not find image : "++ (show (Settings.imageDir++s)))++" \nWithin avaible image paths : "++show (M.keys allImgs))) myImg
+  fromMaybe (error (("Could not find image : "++ (show (Settings.imageDir++s)))++" \nWithin available image paths : "++show (M.keys allImgs))) myImg
 
   

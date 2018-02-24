@@ -20,7 +20,11 @@ blackAPixel = PixelRGBA8 0 0 0 255
 whitePixel = PixelRGB8 255 255 255
 blackImage = (\_-> generateImage (\_ _ -> blackAPixel) 10 10)
 
-data Direction = Up | Down | Left | Right | None deriving (Eq, Enum, Bounded, Show, Generic)
+data Direction = 
+  Up | Down | Left | Right |
+  UpLeft | UpRight | DownLeft | DownRight | 
+  None 
+  deriving (Eq, Enum, Bounded, Show, Generic)
 
 nextDir :: Direction -> Direction
 nextDir d = if d==maxBound then minBound else succ d

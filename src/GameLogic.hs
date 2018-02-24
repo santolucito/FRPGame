@@ -101,11 +101,16 @@ makeMove :: Double -> Direction -> GameObj -> GameObj
 makeMove dt d o = let 
     s = Settings.speed*dt
     updateF = case d of
-     Down  -> (0,-s)
-     Up    -> (0,s)
-     Left  -> (-s,0)
-     Right -> (s,0)
-     None  -> (0,0)
+     UpLeft     -> diag (-s,s)
+     UpRight    -> diag (s,s)
+     DownLeft   -> diag (-s,-s)
+     DownRight  -> diag (s,-s)
+     Up         -> (0,s)
+     Down       -> (0,-s)
+     Left       -> (-s,0)
+     Right      -> (s,0)
+     None       -> (0,0)
+    diag (x,y) = (x/1.4,y/1.4)
     appT (dx,dy) (x,y) = (x+dx,y+dy)
     motion = d/=None
     objWithNewPos = over (position) (appT updateF) o
