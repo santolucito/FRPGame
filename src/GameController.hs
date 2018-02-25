@@ -66,7 +66,7 @@ changeLevel g is gs = case _status gs of
   ShowInterface -> error "Tried to change level while ShowInterface"
  where
   savedLevel = 
-    over (board.level) (\l-> Level{_num=1+_num l,_datapath=_datapath l}) $
+    over (board.level) (\l-> Level{_num=1+_num l,_displayImage=_displayImage l,_collisionImage = _collisionImage l}) $
     set status InProgress $
     set (board.player1.gameObj.dir) None $
     set (board.player1.gameObj.position) (view (gameObj.position) initPlayer) $

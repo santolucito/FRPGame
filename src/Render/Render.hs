@@ -84,7 +84,7 @@ placeInterface g (dsX',dsY') =
  where
    (dsX,dsY) = (fromIntegral dsX', fromIntegral dsY')
 
-interfaceColor = makeColor 1 1 1 0.9
+interfaceColor = makeColor 1 1 1 0.8
 
 mapTup :: (a -> b) -> (a, a) -> (b, b)
 mapTup f (a1, a2) = (f a1, f a2)

@@ -52,8 +52,9 @@ data GameState = GameState {
    }
 
 data Level = Level {
-    _num::Int
-  , _datapath::String} deriving Show
+  _num::Int,
+  _displayImage ::String,
+  _collisionImage :: String} deriving Show
 
 
 makeLenses ''GameObj

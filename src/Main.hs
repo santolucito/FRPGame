@@ -37,9 +37,10 @@ playGame =do
 
     levelImgs <- makeImgMap levelImgSrcs
     playerImgs <- makeImgMap playerImgSrcs
+    boardImgs <- boardImgMap
     --coinImg <- makeImgMap coinImgSrc
     
-    let imgs = levelImgs `union` playerImgs
+    let imgs = levelImgs `union` playerImgs `union` boardImgs
     playYampa
         (if Settings.fullscreen 
            then G.FullScreen

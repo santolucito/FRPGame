@@ -11,15 +11,26 @@ import qualified Graphics.Gloss.Interface.IO.Game as G
 import Graphics.Gloss.Juicy
 import Codec.Picture
 
-import qualified Data.Map as M
+import qualified Data.Map as M --TODO probably should be a hash map?
 import Data.Maybe
 --import Debug.Trace
 
 -- | Where in the file system do images come from
 --   TODO: make this automatically read the dir
+--   REALLY TODO: this is so dumb, auto read for directory please
 levelImgSrcs :: [FilePath]
-levelImgSrcs = map ("pics/"++) [Settings.levelImageSrc, "Coin/coin.png", "Ghost/ghost-orange.png", "Ghost/ghost-purple.png"]
+levelImgSrcs = map (Settings.imageDir++) ["Coin/coin.png", "Ghost/ghost-orange.png", "Ghost/ghost-purple.png"]
 
+myReadImage s = do
+  i <- readImage s
+  return $ either (error ("couldnt read image: "++s)) convertRGBA8 i
+
+boardImgMap :: IO(ImageMap)
+boardImgMap = do
+ lvlImgPic <- myReadImage (Settings.imageDir++Settings.levelImageSrc)
+ lvlImgCollisions <- myReadImage (Settings.imageDir++Settings.levelCollisionImageSrc)
+ let pic = fromImageRGBA8$ lvlImgPic
+ return $ M.singleton (Settings.imageDir++Settings.levelImageSrc) (lvlImgCollisions, pic)
 
 playerImgSrcs :: [FilePath]
 playerImgSrcs = let
@@ -31,10 +42,10 @@ playerImgSrcs = let
 --   use a map from state names (string from file name) to image
 makeImgMap :: [FilePath] -> IO(ImageMap)
 makeImgMap fileNames = do
- allImages <- mapM readImage fileNames
- let imgs = map (either blackImage convertRGBA8) allImages
- let pics = map fromImageRGBA8 imgs --TODO: or is 'loadJuicy is' better?
- let toMap ks vs = M.fromList $ zip ks vs
+ allImages <- mapM readImage fileNames --TODO use myReadImage
+ let imgs = map (either blackImage convertRGBA8) allImages -- the image data
+ let pics = map fromImageRGBA8 imgs  -- the pic to display
+ let toMap ks vs = M.fromList$ zip ks vs
  return $ toMap fileNames (zip imgs pics)
 
  -- | get the chacter state image given a player state
