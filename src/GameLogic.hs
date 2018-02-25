@@ -40,6 +40,7 @@ update = proc (gameState, input) ->
 useInput :: _ -> GameState
 useInput (gameState,input,dt) = case input of
   None -> set (board.player1.gameObj.inMotion) False gameState
+  Enter -> set (board.player1.gameObj.inMotion) False gameState
   dir -> over (board.player1.gameObj) (moveObj dt dir gameState) gameState
 
 -- TODO doesnt reset the randGen until the move is over
@@ -110,7 +111,7 @@ makeMove dt d o = let
      Down       -> (0,-s)
      Left       -> (-s,0)
      Right      -> (s,0)
-     _       -> (0,0)
+     _          -> (0,0)
     diag (x,y) = (x/1.4,y/1.4)
     appT (dx,dy) (x,y) = (x+dx,y+dy)
     motion = d/=None

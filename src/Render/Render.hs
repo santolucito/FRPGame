@@ -72,12 +72,14 @@ placeText g (dsX', dsY') = let
  in 
    translate ((-0.35)*dsX) (0.4*dsY) $ 
      (color (interfaceColor) $ rectangleSolid (0.4*dsX) (0.2*dsY)) <>
+     (color black $ rectangleWire (0.4*dsX) (0.2*dsY)) <>
      (translate (-90) (-20) $ scale (0.5) (0.5) $ text t)
 
 placeInterface :: GameState -> (Int,Int) -> Picture
 placeInterface g (dsX',dsY') =
    translate 0 ((-0.45)*dsY) $ 
      (color (interfaceColor) $ rectangleSolid (0.8*dsX) (0.2*dsY)) <>
+     (color black $ rectangleWire (0.8*dsX) (0.2*dsY)) <>
      (translate ((-0.3)*dsX) 0 $ scale (0.25) (0.25) $ text "Interface Goes Here")
  where
    (dsX,dsY) = (fromIntegral dsX', fromIntegral dsY')
