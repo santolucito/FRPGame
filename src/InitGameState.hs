@@ -46,7 +46,7 @@ emptyBoard is = Board {
 initObjs n = S.fromList (
    --map (uncurry makeCoin) coinPos
    (map makeGhost $ take n [
-	(130,260,"orange"),
+	(130,300,"orange"),
 	(-230,80,"orange"),
 	(130,220,"purple"),
 	(-130,20,"purple"),
