@@ -34,6 +34,7 @@ parseInput = proc keys -> do
   getK _ = Nothing
 
   calcDir (up,down,left,right,enter) = if 
+    | enter         ->  T.Enter --TODO this isnt really a direction...
     | up && left    ->  T.UpLeft
     | up && right   ->  T.UpRight
     | down && left  ->  T.DownLeft
@@ -42,5 +43,4 @@ parseInput = proc keys -> do
     | down          ->  T.Down
     | left          ->  T.Left
     | right         ->  T.Right
-    | enter         ->  T.Enter --TODO this isnt really a direction...
     | True          ->  T.None

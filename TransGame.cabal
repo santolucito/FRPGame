@@ -26,7 +26,8 @@ executable TransGame
   ghc-options: 
     -W 
     -Wall 
-    -O 
+    -O2
+    -threaded
     -fprof-auto
     -rtsopts
     "-with-rtsopts= -s -h -i0.1"

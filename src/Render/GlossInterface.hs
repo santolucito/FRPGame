@@ -3,6 +3,7 @@ module Render.GlossInterface where
 import Prelude hiding (id, (.))
 
 import FRP.Yampa
+import Settings
 
 import Graphics.Gloss (Color, Display, Picture(Blank))
 import qualified Graphics.Gloss.Interface.IO.Game as G
@@ -14,7 +15,7 @@ playYampa ::
     Display ->
     Color ->
     Int ->
-    SF (Event G.Event) Picture ->
+    SF (Event G.Event, (Int,Int)) Picture ->
     IO ()
 
 playYampa display color frequency network = 
@@ -23,14 +24,13 @@ playYampa display color frequency network =
     events <- newIORef NoEvent
 
     handle <- reactInit 
-        (return NoEvent)
-        (\_ changed pic -> 
-          do
+        (return (NoEvent, Settings.windowSize))
+        (\_ changed pic -> do
             if changed then vPic `atomicWriteIORef` pic else return ()
             return False)
         network
     
-    _ <- react handle (infts, Just NoEvent)
+    _ <- react handle (infts, Just (NoEvent, Settings.windowSize))
 
     -- Since `react` requires nonzero time intervals,
     -- we pass infinitesimal time intervals and accumulate them on
@@ -51,7 +51,7 @@ playYampa display color frequency network =
                 if delta' > 0
                   then do
                     e <- readIORef events
-                    _ <- react handle (delta', Just e)
+                    _ <- react handle (delta', Just (e, Settings.windowSize) )
                     atomicWriteIORef events NoEvent
                     return 0.0
                   else

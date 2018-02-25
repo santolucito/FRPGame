@@ -13,7 +13,7 @@ import Render.ImageIO
 
 import Input.Input
 
-import FRP.Yampa (Event(..), SF, (>>>))
+import FRP.Yampa (Event(..), SF, (>>>), (<<<), returnA)
 import qualified Graphics.Gloss.Interface.IO.Game as G
 import Data.Map (union)
 import System.Random (newStdGen, StdGen)
@@ -41,7 +41,10 @@ playGame =do
     
     let imgs = levelImgs `union` playerImgs
     playYampa
-        (G.InWindow "Yampa Example" (800, 600) (800, 600))
+        (if Settings.fullscreen 
+           then G.FullScreen
+           --offset window by windoesize so everything is on screen
+           else (G.InWindow "Yampa Example" Settings.windowSize Settings.windowSize) )
         G.white
         Settings.fps
         (mainSF g imgs)
@@ -50,6 +53,8 @@ playGame =do
 -- game process, starting from parsing the input, moving to the game logic
 -- based on that input and finally drawing the resulting game state to
 -- Gloss' Picture
-mainSF :: StdGen -> ImageMap -> SF (Event InputEvent) G.Picture
-mainSF g is = 
-  parseInput >>> wholeGame g is (initialState g is) >>> drawGame
+mainSF :: StdGen -> ImageMap -> SF ((Event InputEvent),(Int,Int)) G.Picture
+mainSF g is = proc (e,displaySize) -> do
+  updatedGs <- wholeGame g is (initialState g is) <<< parseInput -< e
+  pic <- drawGame -< (updatedGs,displaySize)
+  returnA -< pic

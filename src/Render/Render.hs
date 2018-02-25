@@ -15,19 +15,19 @@ import Control.Lens (view)
 
 -- | After parsing the game input and reacting to it we need to draw the
 -- current game state which might have been updated
-drawGame :: SF GameState Picture
+drawGame :: SF (GameState, (Int,Int)) Picture
 drawGame = arr renderState
 
 -- | render in 'bottom' to 'top' order
 --   (ie placeBkgs is the bottom layer)
 -- TODO use getScreenSize and make this IO
-renderState :: GameState -> Picture
-renderState s = pictures [
+renderState :: (GameState, (Int,Int)) -> Picture
+renderState (s, displaySize) = pictures [
     placeBkgd s
   , placePlayer s
   , (mconcat $ placeGameObjs s)
-  , placeText s
-  , (if showInterface s then placeInterface s else blank)
+  , placeText s displaySize
+  , (if showInterface s then placeInterface s displaySize else blank)
   ]
 
 --TODO major refactoring needed here
@@ -60,8 +60,9 @@ placeBkgd g = let
  in
    translate (-x) (-y) bkgd
 
-placeText :: GameState -> Picture
-placeText g = let
+placeText :: GameState -> (Int,Int) -> Picture
+placeText g (dsX', dsY') = let
+   (dsX,dsY) = (fromIntegral dsX', fromIntegral dsY')
    --TODO move to GameLogic (add text field to GameState?)
    t = case _status g of 
      GameOver -> "Game Over!" 
@@ -69,17 +70,19 @@ placeText g = let
      InProgress -> "Score:"++ (show $ (_score._player1._board) g)
      ShowInterface -> "Paused"
  in 
-   -- TODO dont hardcode position values - make relative to window size
-   translate (-300) 260 $ 
-     (color (greyN 0.95) $ rectangleSolid 600 80) <>
+   translate ((-0.35)*dsX) (0.4*dsY) $ 
+     (color (interfaceColor) $ rectangleSolid (0.4*dsX) (0.2*dsY)) <>
      (translate (-90) (-20) $ scale (0.5) (0.5) $ text t)
 
-placeInterface :: GameState -> Picture
-placeInterface g =
-   translate 0 (-260) $ 
-     (color (greyN 0.90) $ rectangleSolid 600 80) <>
-     (translate (-300) (-20) $ scale (0.5) (0.5) $ text "Interface Goes Here")
-      
+placeInterface :: GameState -> (Int,Int) -> Picture
+placeInterface g (dsX',dsY') =
+   translate 0 ((-0.45)*dsY) $ 
+     (color (interfaceColor) $ rectangleSolid (0.8*dsX) (0.2*dsY)) <>
+     (translate ((-0.3)*dsX) 0 $ scale (0.25) (0.25) $ text "Interface Goes Here")
+ where
+   (dsX,dsY) = (fromIntegral dsX', fromIntegral dsY')
+
+interfaceColor = makeColor 1 1 1 0.9
 
 mapTup :: (a -> b) -> (a, a) -> (b, b)
 mapTup f (a1, a2) = (f a1, f a2)
