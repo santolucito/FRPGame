@@ -97,7 +97,7 @@ updateCollide g o =
         (over (board.player1.score) (+1) g,
         set display False o)
   ghostCollide =
-        (set (status) ShowInterface g,
+        (set (status) (ShowInterface "Dont run into the monsters! \nPress Enter to restart") g,
          o)
 
 wallCollision :: GameState -> GameObj -> Bool

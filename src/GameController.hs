@@ -63,7 +63,7 @@ changeLevel g is gs = case _status gs of
     (leveling gs &&& after 5 ())
     (const $ wholeGame g is savedLevel) --if you level up, keep some info from last level
   InProgress -> error "Tried to change level while InProgress" 
-  ShowInterface -> error "Tried to change level while ShowInterface"
+  ShowInterface _ -> error "Tried to change level while ShowInterface"
  where
   savedLevel = 
     over (board.level) (\l-> Level{_num=1+_num l,_displayImage=_displayImage l,_collisionImage = _collisionImage l}) $

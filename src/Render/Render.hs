@@ -68,7 +68,7 @@ placeText g (dsX', dsY') = let
      GameOver -> "Game Over!" 
      LevelUp -> "Level Up"
      InProgress -> "Score:"++ (show $ (_score._player1._board) g)
-     ShowInterface -> "Paused"
+     ShowInterface _ -> "Paused"
  in 
    translate ((-0.35)*dsX) (0.4*dsY) $ 
      (color (interfaceColor) $ rectangleSolid (0.4*dsX) (0.2*dsY)) <>
@@ -78,11 +78,17 @@ placeText g (dsX', dsY') = let
 placeInterface :: GameState -> (Int,Int) -> Picture
 placeInterface g (dsX',dsY') =
    translate 0 ((-0.45)*dsY) $ 
-     (color (interfaceColor) $ rectangleSolid (0.8*dsX) (0.2*dsY)) <>
-     (color black $ rectangleWire (0.8*dsX) (0.2*dsY)) <>
-     (translate ((-0.3)*dsX) 0 $ scale (0.25) (0.25) $ text "Interface Goes Here")
+     (color (interfaceColor) $ rectangleSolid (xSize*dsX) (ySize*dsY)) <>
+     (color black $ rectangleWire (xSize*dsX) (ySize*dsY)) <>
+     (translate (-xSize*0.5*dsX) (ySize*0.5*dsY) $ mconcat $ zipWith drawLine [1..] textLines)
  where
    (dsX,dsY) = (fromIntegral dsX', fromIntegral dsY')
+   drawLine ln t = translate 0 ((-ln)*lineHeight) $ scale (0.25) (0.25) t
+   lineHeight = 30
+   xSize = 0.8
+   ySize = 0.2
+   textLines = maybe (error "Tried to display Interface in non-interface state") ((map text). lines) (getInterfaceText g)
+   
 
 interfaceColor = makeColor 1 1 1 0.8
 

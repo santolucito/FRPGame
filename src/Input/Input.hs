@@ -27,8 +27,8 @@ parseInput = proc keys -> do
   returnA -< calcDir (up,down,left,right,enter)
  where 
   readKey k lastVal events = if 
-    | elem (k, G.Up)   $ getK events -> trace ("UP - "++(show k)) False
-    | elem (k, G.Down) $ getK events -> trace ("DN - "++(show k)) True 
+    | elem (k, G.Up)   $ getK events -> False
+    | elem (k, G.Down) $ getK events -> True 
     | otherwise                      -> lastVal
   getK = mapMaybe getK'
   getK' (G.EventKey k d _ _ ) = Just (k,d)

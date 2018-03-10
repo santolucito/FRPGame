@@ -3,9 +3,16 @@ module Utils where
 import Types.Common
 import Types.GameObjs
 
+import Data.Maybe 
+
 -- | conveniences
 showInterface :: GameState -> Bool
-showInterface g = _status g == ShowInterface
+showInterface = isJust . getInterfaceText
+
+getInterfaceText :: GameState -> Maybe String
+getInterfaceText g = case _status g of
+  ShowInterface t -> Just t
+  _ -> Nothing
 
 isGameOver :: GameState -> Bool
 isGameOver g = _status g == GameOver

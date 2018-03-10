@@ -26,8 +26,6 @@ update = proc (gameState, input) -> do
     gs <- arr useInput -< (gameState,input)
     returnA -< gs
   
---TODO make continuos time based motion
-
 useInput :: _ -> GameState
 useInput (gameState,input) = case input of
   Enter -> set status GameOver gameState

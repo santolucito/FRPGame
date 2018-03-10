@@ -36,7 +36,7 @@ prevDir d = if d==minBound then maxBound else pred d
 data GameStatus = InProgress
                 | GameOver
                 | LevelUp
-                | ShowInterface 
+                | ShowInterface String
                 deriving (Eq, Show)
 
 
