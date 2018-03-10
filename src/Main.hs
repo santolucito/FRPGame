@@ -54,8 +54,8 @@ playGame =do
 -- game process, starting from parsing the input, moving to the game logic
 -- based on that input and finally drawing the resulting game state to
 -- Gloss' Picture
-mainSF :: StdGen -> ImageMap -> SF ((Event InputEvent),(Int,Int)) G.Picture
-mainSF g is = proc (e,displaySize) -> do
-  updatedGs <- wholeGame g is (initialState g is) <<< parseInput -< e
+mainSF :: StdGen -> ImageMap -> SF (Event [InputEvent],(Int,Int)) G.Picture
+mainSF g is = proc (es,displaySize) -> do
+  updatedGs <- wholeGame g is (initialState g is) <<< parseInput -< es
   pic <- drawGame -< (updatedGs,displaySize)
   returnA -< pic

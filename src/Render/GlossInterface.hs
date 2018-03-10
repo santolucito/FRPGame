@@ -15,7 +15,7 @@ playYampa ::
     Display ->
     Color ->
     Int ->
-    SF (Event G.Event, (Int,Int)) Picture ->
+    SF (Event [G.Event], (Int,Int)) Picture ->
     IO ()
 
 playYampa display color frequency network = 
@@ -43,7 +43,8 @@ playYampa display color frequency network =
         (const $ readIORef vPic)
         -- does not handle multiple events within one update cycle
         -- TODO make events :: IORef [Event]?
-        (\e t -> writeIORef events (Event e) >> return (t+infts))
+        -- this (should) accumulates events, and only processes them in the \delta fxn below
+        (\e t -> modifyIORef events (addGameEvent e) >> return (t+infts))
         (\delta t ->
             let 
                 delta' = realToFrac delta - t
@@ -58,3 +59,6 @@ playYampa display color frequency network =
                     return (-delta'))
   where
     infts = 0.01 / fromIntegral frequency
+    addGameEvent gameE yampaE  = case yampaE of
+      NoEvent -> Event [gameE]
+      Event es -> Event (gameE:es)
