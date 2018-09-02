@@ -121,12 +121,7 @@ makeMove dt d o = let
      Right      -> (s,0)
      _          -> (0,0)
     diag (x,y) = (x/1.4,y/1.4)
-    appT (dx,dy) (x,y) = let
-        (x',y') = (x+dx,y+dy)
-      in
-        if abs x' > 375 || abs y' > 400 
-        then (x,y)
-        else (x',y')
+    appT (dx,dy) (x,y) = (x+dx,y+dy)
     motion = d/=None
     objWithNewPos = over (position) (appT updateF) o
     objWithNewDir = set (dir) d objWithNewPos

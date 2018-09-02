@@ -13,7 +13,7 @@ import Render.ImageIO
 
 import Input.Input
 
-import FRP.Yampa (Event(..), SF, (>>>), (<<<), returnA)
+import FRP.Yampa (Event(..), SF, (<<<), returnA, arr)
 import qualified Graphics.Gloss.Interface.IO.Game as G
 import Data.Map (union)
 import System.Random (newStdGen, StdGen)
@@ -44,8 +44,8 @@ playGame =do
     playYampa
         (if Settings.fullscreen 
            then G.FullScreen
-           --offset window by windoesize so everything is on screen
-           else (G.InWindow "Yampa Example" Settings.windowSize Settings.windowSize) )
+           --offset window by windowsize so everything is on screen
+           else (G.InWindow "FRP Game" Settings.windowSize Settings.windowSize) )
         G.white
         Settings.fps
         (mainSF g imgs)
@@ -57,5 +57,5 @@ playGame =do
 mainSF :: StdGen -> ImageMap -> SF (Event [InputEvent],(Int,Int)) G.Picture
 mainSF g is = proc (es,displaySize) -> do
   updatedGs <- wholeGame g is (initialState g is) <<< parseInput -< es
-  pic <- drawGame -< (updatedGs,displaySize)
+  pic <- arr drawGame -< (updatedGs,displaySize)
   returnA -< pic

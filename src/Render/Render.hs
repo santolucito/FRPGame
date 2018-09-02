@@ -4,31 +4,54 @@ module Render.Render where
 import Data.Monoid
 import qualified Data.HashSet as S
 import Graphics.Gloss
+import Codec.Picture
 
 import Utils
 import Types.GameObjs
 import Types.Common
-import FRP.Yampa
 import Render.ImageIO
 
 import Control.Lens (view)
 
--- | After parsing the game input and reacting to it we need to draw the
--- current game state which might have been updated
-drawGame :: SF (GameState, (Int,Int)) Picture
-drawGame = arr renderState
+import Debug.Trace
 
--- | render in 'bottom' to 'top' order
+-- | After parsing the game input and reacting to it we need to draw the
+--   current game state which might have been updated
+--   render in 'bottom' to 'top' order
 --   (ie placeBkgs is the bottom layer)
 -- TODO use getScreenSize and make this IO
-renderState :: (GameState, (Int,Int)) -> Picture
-renderState (s, displaySize) = pictures [
-    placeBkgd s
-  , placePlayer s
-  , (mconcat $ placeGameObjs s)
-  , placeText s displaySize
-  , (if showInterface s then placeInterface s displaySize else blank)
-  ]
+drawGame :: (GameState, (Int,Int)) -> Picture
+drawGame (s, displaySize) = let
+  imageToRender = pictures [
+      placeBkgd s
+    , placePlayer s
+    , (mconcat $ placeGameObjs s)
+    , placeText s displaySize
+    , (if showInterface s then placeInterface s displaySize else blank)
+    ]
+  badObjs = badObjPlacements s
+ in
+  if S.size badObjs == 0
+  then imageToRender 
+  else error $ "Tried place bad object(s): "++(show badObjs)
+
+-- | The edges of all objs muct be within the background image (no clue why tho)
+--   to check this, check position is half size of board minus a bit for size of gameObj.
+--   This is the last failsafe - these issues should be avoided by keeping objects on the board
+--   by warping positons around the board, making a board with a border, smart ai, etc
+badObjPlacements :: GameState -> S.HashSet GameObj
+badObjPlacements g = let
+   bkgd = fst $ getImg g $ view (board.level) g
+   h = imageHeight bkgd
+   w = imageWidth bkgd
+   badObjs = S.filter 
+         (\o -> _display o && 
+                ((fst $ _position o) > (fromIntegral w/2 - 40) ||
+                 (snd $ _position o) > (fromIntegral h/2 - 40))) 
+         $ S.insert (view (board.player1.gameObj) g) (view (board.objs) g)
+ in
+   badObjs
+
 
 placeGameObjs :: GameState -> [Picture]
 placeGameObjs g = let
@@ -38,7 +61,7 @@ placeGameObjs g = let
    objTrans o = (uncurry translate) $ mapTup realToFrac $ liftTup (-) (_position o) playerPos
    placeObj o = objTrans o $ objScale o $ snd $ getImg g o
  in
-   map placeObj objsToDisplay -- need to reverse to get ghosts on top for some reason (edit, seems to be fine without)
+   map placeObj objsToDisplay -- need to reverse to get ghosts on top for some reason (edit, seems to be fine without, was this on top of coins?)
 
 --TODO is it really not possible to do this with liftA2 or something?
 liftTup f (x,y) (x',y')= (f x x', f y y') 
