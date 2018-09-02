@@ -30,17 +30,18 @@ renderState (s, displaySize) = pictures [
   , (if showInterface s then placeInterface s displaySize else blank)
   ]
 
---TODO major refactoring needed here
 placeGameObjs :: GameState -> [Picture]
 placeGameObjs g = let
-   os' = view (board.objs) g :: S.HashSet GameObj
-   os = S.filter (_display) os'
-   (px,py) = (mapTup realToFrac (view (board.player1.gameObj.position) g) :: (Float,Float))
-   myPos o = mapTup realToFrac (_position o)
-   myScale o = scale (_scaleFactor o) (_scaleFactor o)
-   f o = translate ((fst $myPos o)-px) ((snd $myPos o)-py) $ myScale o $ snd $ getImg g o
+   objsToDisplay = S.toList $ S.filter (_display) $ view (board.objs) g
+   playerPos = view (board.player1.gameObj.position) g
+   objScale o = scale (_scaleFactor o) (_scaleFactor o)
+   objTrans o = (uncurry translate) $ mapTup realToFrac $ liftTup (-) (_position o) playerPos
+   placeObj o = objTrans o $ objScale o $ snd $ getImg g o
  in
-   reverse $ map f (S.toList os) -- need to reverse to get ghosts on top for some reason
+   map placeObj objsToDisplay -- need to reverse to get ghosts on top for some reason (edit, seems to be fine without)
+
+--TODO is it really not possible to do this with liftA2 or something?
+liftTup f (x,y) (x',y')= (f x x', f y y') 
 
 -- | keep the player centered at all times
 --   TODO merge this with placeGameObjs
