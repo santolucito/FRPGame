@@ -31,6 +31,10 @@ update = proc (gameState, input) ->
     gs <- arr (uncurry trackTime) -< (t, gameState)
     movedPlayer <- arr useInput -< (gs,input,t-t')
     movedGhosts <- arr aiMove -< (movedPlayer,t-t')
+    --TODO dont need movedPlayer to move ghosts
+    --     would be nice to parallelize these arrows
+    --     this would require a way to merge two game states (movedPlayer+moveGhosts) 
+    --     to pass to the collions calculation
     collisons <- arr findObjCollisions -< movedGhosts
     newgs <- arr (\g-> if view (board.player1.score) g == ((view (board.level.num) g) *10) then g {_status = LevelUp} else g) -< collisons
     returnA -< newgs
@@ -45,6 +49,7 @@ useInput (gameState,input,dt) = case input of
 
 -- TODO doesnt reset the randGen until the move is over
 -- so every ai uses the same randGen within each move 
+-- this means if the ai ever overlap, they get stuck together
 aiMove :: _ -> GameState
 aiMove (gameState,dt) = let
   isGhost o = (_name o == "ghost")
