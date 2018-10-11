@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Types.Common where
 
@@ -9,6 +10,7 @@ import GHC.Generics
 
 import qualified Data.Map as M
 import Codec.Picture
+import Control.Lens (makeLenses)
 
 -- | A map between image file names to ...
 -- | the Image (fst) is used for look at the data of the picture
@@ -33,14 +35,6 @@ nextDir d = if d==maxBound then minBound else succ d
 prevDir :: Direction -> Direction
 prevDir d = if d==minBound then maxBound else pred d
 
-data GameStatus = InProgress
-                | GameOver
-                | LevelUp
-                | ShowInterface String
-                deriving (Eq, Show)
-
-
 type GameInput = Direction
 --type GameInput = Event Direction
 type InputEvent = G.Event
-

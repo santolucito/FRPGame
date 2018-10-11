@@ -11,7 +11,7 @@ showInterface = isJust . getInterfaceText
 
 getInterfaceText :: GameState -> Maybe String
 getInterfaceText g = case _status g of
-  ShowInterface t -> Just t
+  ShowInterface t -> Just $ displayText t
   _ -> Nothing
 
 isGameOver :: GameState -> Bool

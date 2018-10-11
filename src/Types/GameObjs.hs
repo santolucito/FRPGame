@@ -5,7 +5,6 @@
 module Types.GameObjs where
 
 import Types.Common
-import Types.Interface
 import Control.Lens (makeLenses)
 import System.Random
 import Data.HashSet
@@ -25,6 +24,19 @@ data GameObj = GameObj {
 } deriving (Show,Eq,Generic)
 
 
+data GameStatus = InProgress
+                | GameOver
+                | LevelUp
+                | ShowInterface Interface
+                deriving (Show)
+
+instance Eq GameStatus where
+  ShowInterface _ == ShowInterface _ = True
+  GameOver == GameOver = True
+  LevelUp == LevelUp = True
+  InProgress == InProgress = True
+  _ == _ = False
+
 instance Hashable Direction
 instance Hashable GameObj
 
@@ -42,12 +54,12 @@ data Board = Board {
 } deriving (Show)
 
 
+
 data GameState = GameState { 
      _board :: Board
    , _status :: GameStatus
    , _gen :: StdGen
    , _images :: ImageMap
-   , _interface :: Interface
    , _highscore :: Int --TODO how can i make this more general (file refrence maybe?)
    }
 
@@ -56,10 +68,18 @@ data Level = Level {
   _displayImage ::String,
   _collisionImage :: String} deriving Show
 
+data Interface = Interface {
+  displayText :: String,
+  interfaceUpdate :: (GameState, GameInput) -> GameState
+}
+
+instance Show Interface where
+  show = displayText 
+
+makeLenses ''GameState
+makeLenses ''Level
 
 makeLenses ''GameObj
-makeLenses ''GameState
 makeLenses ''Board
 makeLenses ''Player
-makeLenses ''Level
 

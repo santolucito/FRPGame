@@ -102,8 +102,16 @@ updateCollide g o =
         (over (board.player1.score) (+1) g,
         set display False o)
   ghostCollide =
-        (set (status) (ShowInterface "Dont run into the monsters! \nPress Enter to restart") g,
+        (set (status) (ShowInterface $ Interface {
+              displayText = "Dont run into the monsters! \nPress Enter to restart", 
+              interfaceUpdate = restartGame}) 
+            g,
          o)
+
+restartGame :: (GameState, GameInput) -> GameState
+restartGame (gameState,input) = case input of
+  Enter -> set status GameOver gameState
+  _ -> gameState
 
 wallCollision :: GameState -> GameObj -> Bool
 wallCollision gs o = let

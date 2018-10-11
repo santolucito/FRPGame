@@ -21,13 +21,18 @@ import FRP.Yampa
 import qualified Settings
 import Debug.Trace
 
+-- | How does user input through the interface change the game state
+--   pull the funciton from the game state
 update :: SF (GameState, GameInput) GameState
 update = proc (gameState, input) -> do
-    gs <- arr useInput -< (gameState,input)
+    gs <- arr runArrow -< (gameState,input)
     returnA -< gs
   
-useInput :: _ -> GameState
-useInput (gameState,input) = case input of
-  Enter -> set status GameOver gameState
-  _ -> gameState
-
+-- |  pull out the current interfaceUpdate fxn and apply it the gameState and input
+runArrow (gameState, input) = let
+  f = case (_status gameState) of
+        ShowInterface i -> interfaceUpdate i
+        _ -> trace "Trying to run interface when game status is not ShowInterface" fst --return the gamestate unchanged
+ in
+  f (gameState, input)
+  
