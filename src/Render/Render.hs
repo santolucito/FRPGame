@@ -1,7 +1,6 @@
 
 module Render.Render where
 
-import Data.Monoid
 import qualified Data.HashSet as S
 import Graphics.Gloss
 import Codec.Picture
@@ -29,29 +28,8 @@ drawGame (s, displaySize) = let
     , placeText s displaySize
     , (if showInterface s then placeInterface s displaySize else blank)
     ]
-  badObjs = badObjPlacements s
  in
-  if S.size badObjs == 0
-  then imageToRender 
-  else error $ "Tried place bad object(s): "++(show badObjs)
-
--- | The edges of all objs muct be within the background image (no clue why tho)
---   to check this, check position is half size of board minus a bit for size of gameObj.
---   This is the last failsafe - these issues should be avoided by keeping objects on the board
---   by warping positons around the board, making a board with a border, smart ai, etc
-badObjPlacements :: GameState -> S.HashSet GameObj
-badObjPlacements g = let
-   bkgd = fst $ getImg g $ view (board.level) g
-   h = imageHeight bkgd
-   w = imageWidth bkgd
-   badObjs = S.filter 
-         (\o -> _display o && 
-                ((fst $ _position o) > (fromIntegral w/2 - 40) ||
-                 (snd $ _position o) > (fromIntegral h/2 - 40))) 
-         $ S.insert (view (board.player1.gameObj) g) (view (board.objs) g)
- in
-   badObjs
-
+  imageToRender 
 
 placeGameObjs :: GameState -> [Picture]
 placeGameObjs g = let
@@ -64,6 +42,7 @@ placeGameObjs g = let
    map placeObj objsToDisplay -- need to reverse to get ghosts on top for some reason (edit, seems to be fine without, was this on top of coins?)
 
 --TODO is it really not possible to do this with liftA2 or something?
+liftTup :: (t1 -> t2 -> b) -> (t1, t1) -> (t2, t2) -> (b, b)
 liftTup f (x,y) (x',y')= (f x x', f y y') 
 
 -- | keep the player centered at all times
@@ -80,9 +59,16 @@ placePlayer g = let
 placeBkgd :: GameState -> Picture
 placeBkgd g = let
    bkgd = snd$ getImg g $ view (board.level) g
+   frameSize = 1
+   frameColor = red
+   frame = (uncurry rectangleSolid) $ (\(x,y) -> (fromIntegral x, fromIntegral y)) $
+             (case bkgd of
+                Bitmap b -> bitmapSize b
+                otherwise -> trace "Non bitmap backgrounds not yet supported - defaulting to no frame" (0,0))
    (x,y) = mapTup realToFrac$ view (board.player1.gameObj.position) g
  in
-   translate (-x) (-y) bkgd
+   translate (-x) (-y) $ pictures
+     [scale frameSize frameSize $ color frameColor frame, bkgd]
 
 placeText :: GameState -> (Int,Int) -> Picture
 placeText g (dsX', dsY') = let

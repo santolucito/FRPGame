@@ -155,7 +155,9 @@ pixelAtFromCenter i x y = let
   x' = (w `div` 2) + x
   y' = (h `div` 2) + (-y)
  in
-  pixelAt i x' y'
+  pixelAt i 
+    (min (imageWidth i-1) x')
+    (min (imageHeight i-1) y')
   --whitePixel
 
 
