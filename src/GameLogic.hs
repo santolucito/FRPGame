@@ -95,18 +95,32 @@ updateCollide g o =
   then case _name o of 
        "ghost" ->  ghostCollide
        "coin" -> coinCollide
+       "lamp" -> lampCollide
        otherwise -> (traceShow  $ "unhandled collision with"++_name o) (g,o)
   else (g,o)
  where
   coinCollide = 
         (over (board.player1.score) (+1) g,
         set display False o)
+  lampCollide =
+        (set (status) (ShowInterface $ Interface {
+              displayText = "Wow, you found a lamp! \nPress Enter to turn on, Space to turn off", 
+              interfaceUpdate = updateLamp o})
+            g,
+         o)
   ghostCollide =
         (set (status) (ShowInterface $ Interface {
               displayText = "Dont run into the monsters! \nPress Enter to restart", 
               interfaceUpdate = restartGame}) 
             g,
          o)
+
+-- TODO Need a way to display interface and not pause
+updateLamp :: GameObj -> (GameState, GameInput) -> GameState
+updateLamp o (gameState,input) = case input of
+  Enter  -> set status InProgress $ over (board.objs) (S.insert (o{_currentImg = "Lamp/lightsOn.png"  }). S.delete o) gameState
+  Space -> set status InProgress $ over (board.objs) (S.insert (o{_currentImg = "Lamp/lightsOff.png" }). S.delete o) gameState
+  _ -> gameState
 
 restartGame :: (GameState, GameInput) -> GameState
 restartGame (gameState,input) = case input of

@@ -45,6 +45,7 @@ emptyBoard is = Board {
 
 initObjs n = S.fromList (
    --map (uncurry makeCoin) coinPos
+   [(makeLamp 100 200)] ++
    (map makeGhost $ take n [
         (130,300,"orange"),
         (-230,80,"orange"),
@@ -76,6 +77,17 @@ makeCoin x y = GameObj {
   ,_scaleFactor = 0.8
   ,_display = True
   ,_currentImg = "Coin/coin.png"
+  ,_gifPath = Nothing
+  ,_inMotion = False
+  ,_dir      = Left
+}
+
+makeLamp x y = GameObj {
+   _name = "lamp"
+  ,_position = (x,y)
+  ,_scaleFactor = 0.2
+  ,_display = True
+  ,_currentImg = "Lamp/lightsOn.png"
   ,_gifPath = Nothing
   ,_inMotion = False
   ,_dir      = Left
