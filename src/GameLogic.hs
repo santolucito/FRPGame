@@ -99,7 +99,7 @@ findObjCollisions g = let
 --   TODO, why not just return the new gameState?
 updateCollide :: GameState -> GameObj -> (GameState,GameObj)
 updateCollide g o = 
-  if elem ((\(x,y)->(floor x,floor y)) $ _position o) (objLocs g (view (board.player1.gameObj) g))
+  if S.empty /= S.intersection (S.fromList $ objLocs g o) (S.fromList $ objLocs g (view (board.player1.gameObj) g))
   then case _name o of 
        "ghost" ->  ghostCollide
        "coin" -> coinCollide
@@ -175,16 +175,18 @@ makeMove dt d o = let
   in
     set (inMotion) motion objWithNewDir
 
-
---TODO for pixel level detection
---rather than building rect, get positions of all nonalpha pixels (might be a problem for gifs tho)
+-- | Get the outline of the rectangle of the game obj
+--   TODO for pixel level detection - get outline of img of game obj
 objLocs ::GameState -> GameObj -> [(Int,Int)]
 objLocs g obj = let
   (x,y,xsize,ysize) = objectDims g obj
   xsize' = xsize/2
   ysize' = ysize/2
  in
-  [(x',y') | x' <- [floor x-ceiling xsize'.. floor x+ceiling xsize'],y' <- [floor y-ceiling ysize'.. floor y+ceiling ysize']]
+  [(x',y') | x' <- [floor x-ceiling xsize'.. floor x+ceiling xsize'],
+             y' <- [floor y-ceiling ysize', floor y+ceiling ysize']] ++
+  [(x',y') | x' <- [floor x-ceiling xsize', floor x+ceiling xsize'],
+             y' <- [floor y-ceiling ysize'.. floor y+ceiling ysize']]
 
 --all positions are from center of image
 objectDims :: GameState -> GameObj -> (Double,Double,Double,Double)
@@ -203,8 +205,8 @@ pixelAtFromCenter i x y = let
   y' = (h `div` 2) + (-y)
  in
   pixelAt i 
-    (min (imageWidth i-1) x')
-    (min (imageHeight i-1) y')
+    (max 0 $ min (imageWidth i-1) x')
+    (max 0 $ min (imageHeight i-1) y')
   --whitePixel
 
 

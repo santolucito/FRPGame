@@ -46,8 +46,6 @@ data Board = Board {
   ,_objs      :: HashSet GameObj
 } deriving (Show)
 
-
-
 data GameState = GameState { 
      _board :: Board
    , _status :: GameStatus

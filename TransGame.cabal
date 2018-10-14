@@ -43,6 +43,7 @@ executable TransGame
     -O2
     -threaded
     -fprof-auto
+    -- -prof
     -rtsopts
-    "-with-rtsopts= -s -h -i0.1"
+    "-with-rtsopts= -s -h -i0.1" 
 

@@ -56,7 +56,8 @@ initObjs n = S.fromList (
         (131,40,"orange"),
         (-139,20,"purple"),
         (145,20,"orange")--TODO, gnerate rather than hard code
-        ])
+        ]) ++
+    [makeCoin 0 100, makeCoin 0 200]
   )
 
 coinPos =
