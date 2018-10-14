@@ -25,7 +25,8 @@ parseInput = proc keys -> do
   right <- accumHoldBy (readKey $ G.SpecialKey G.KeyRight) False -< keys
   enter <- accumHoldBy (readKey $ G.SpecialKey G.KeyEnter) False -< keys
   space <- accumHoldBy (readKey $ G.SpecialKey G.KeySpace) False -< keys
-  returnA -< calcDir (up,down,left,right,enter,space)
+  pause <- accumHoldBy (readKey $ G.SpecialKey G.KeyEsc) False -< keys
+  returnA -< calcDir (up,down,left,right,enter,space,pause)
  where 
   readKey k lastVal events = if 
     | elem (k, G.Up)   $ getK events -> False
@@ -35,9 +36,10 @@ parseInput = proc keys -> do
   getK' (G.EventKey k d _ _ ) = Just (k,d)
   getK' _ = Nothing
 
-  calcDir (up,down,left,right,enter,space) = if 
+  calcDir (up,down,left,right,enter,space,pause) = if 
     | enter         ->  T.Enter --TODO this isnt really a direction...
     | space         ->  T.Space --TODO this isnt really a direction...
+    | pause         ->  T.Pause --TODO this isnt really a direction...
     | up && left    ->  T.UpLeft
     | up && right   ->  T.UpRight
     | down && left  ->  T.DownLeft

@@ -46,6 +46,7 @@ useInput (gameState,input,dt) = case input of
   None -> set (board.player1.gameObj.inMotion) False gameState
   Enter -> set (board.player1.gameObj.inMotion) False gameState
   Space -> set (board.player1.gameObj.inMotion) False gameState
+  Pause -> set (board.player1.gameObj.inMotion) False gameState
   dir -> over (board.player1.gameObj) (moveObj dt dir gameState) gameState 
   --TODO dir is the catch all
   --everytime i add a new key i need to add it here

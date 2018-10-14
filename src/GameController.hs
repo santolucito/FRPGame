@@ -44,7 +44,10 @@ update = proc (gs,gi) -> do
   nextGs' <- if (_status gs/=Paused)
              then GameLogic.update      -< (nextGs,gi)
              else arr id -< nextGs
-  returnA -< nextGs'
+  returnA -< if 
+              | (gi == Pause && _status gs/=Paused) -> set status Paused gs 
+              | (gi == Pause && _status gs==Paused) -> set status InProgress nextGs' 
+              | otherwise -> nextGs' 
 
 
 levelEvent :: SF GameState (Event GameState)

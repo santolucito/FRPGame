@@ -26,7 +26,7 @@ blackImage = (\_-> generateImage (\_ _ -> blackAPixel) 10 10)
 data Direction = 
   Up | Down | Left | Right |
   UpLeft | UpRight | DownLeft | DownRight | 
-  Enter | Space | None 
+  Enter | Space | Pause | None 
   deriving (Eq, Enum, Bounded, Show, Generic)
 
 nextDir :: Direction -> Direction
