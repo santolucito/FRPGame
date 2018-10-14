@@ -30,9 +30,7 @@ update = proc (gameState, input) -> do
   
 -- |  pull out the current interfaceUpdate fxn and apply it the gameState and input
 runArrow (gameState, input) = let
-  f = case (_status gameState) of
-        ShowInterface i -> interfaceUpdate i
-        _ -> trace "Trying to run interface when game status is not ShowInterface" fst --return the gamestate unchanged
+  f = (_interfaceUpdate$ _interface gameState) 
  in
   f (gameState, input)
   

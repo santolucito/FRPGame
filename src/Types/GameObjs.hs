@@ -27,15 +27,8 @@ data GameObj = GameObj {
 data GameStatus = InProgress
                 | GameOver
                 | LevelUp
-                | ShowInterface Interface
-                deriving (Show)
-
-instance Eq GameStatus where
-  ShowInterface _ == ShowInterface _ = True
-  GameOver == GameOver = True
-  LevelUp == LevelUp = True
-  InProgress == InProgress = True
-  _ == _ = False
+                | Paused
+                deriving (Eq,Show)
 
 instance Hashable Direction
 instance Hashable GameObj
@@ -58,6 +51,7 @@ data Board = Board {
 data GameState = GameState { 
      _board :: Board
    , _status :: GameStatus
+   , _interface :: Interface
    , _gen :: StdGen
    , _images :: ImageMap
    , _highscore :: Int --TODO how can i make this more general (file refrence maybe?)
@@ -69,15 +63,17 @@ data Level = Level {
   _collisionImage :: String} deriving Show
 
 data Interface = Interface {
-  displayText :: String,
-  interfaceUpdate :: (GameState, GameInput) -> GameState
+  _active :: Bool,
+  _displayText :: String,
+  _interfaceUpdate :: (GameState, GameInput) -> GameState
 }
 
 instance Show Interface where
-  show = displayText 
+  show = _displayText 
 
 makeLenses ''GameState
 makeLenses ''Level
+makeLenses ''Interface
 
 makeLenses ''GameObj
 makeLenses ''Board

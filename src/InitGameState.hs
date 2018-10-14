@@ -20,6 +20,7 @@ initialState :: StdGen -> ImageMap -> GameState
 initialState g is = GameState { 
    _board = emptyBoard is
   ,_status = InProgress
+  ,_interface = Interface {_active=False,_displayText="",_interfaceUpdate=undefined}
   ,_gen = g
   ,_images = is
 }
@@ -48,7 +49,7 @@ initObjs n = S.fromList (
    [(makeLamp 100 200)] ++
    (map makeGhost $ take n [
         (130,300,"orange"),
-        (-230,80,"orange"),
+        (-250,80,"orange"),
         (130,220,"purple"),
         (-130,20,"purple"),
         (-130,80,"purple"),

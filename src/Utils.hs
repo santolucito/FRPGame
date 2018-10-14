@@ -7,12 +7,10 @@ import Data.Maybe
 
 -- | conveniences
 showInterface :: GameState -> Bool
-showInterface = isJust . getInterfaceText
+showInterface = _active. _interface
 
-getInterfaceText :: GameState -> Maybe String
-getInterfaceText g = case _status g of
-  ShowInterface t -> Just $ displayText t
-  _ -> Nothing
+getInterfaceText :: GameState -> String
+getInterfaceText = _displayText. _interface
 
 isGameOver :: GameState -> Bool
 isGameOver g = _status g == GameOver

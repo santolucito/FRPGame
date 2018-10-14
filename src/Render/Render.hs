@@ -78,7 +78,7 @@ placeText g (dsX', dsY') = let
      GameOver -> "Game Over!" 
      LevelUp -> "Level Up"
      InProgress -> "Score:"++ (show $ (_score._player1._board) g)
-     ShowInterface _ -> "Paused"
+     Paused -> "Paused"
  in 
    translate ((-0.35)*dsX) (0.4*dsY) $ 
      (color (interfaceColor) $ rectangleSolid (0.4*dsX) (0.2*dsY)) <>
@@ -97,7 +97,7 @@ placeInterface g (dsX',dsY') =
    lineHeight = 30
    xSize = 0.8
    ySize = 0.2
-   textLines = maybe (error "Tried to display Interface in non-interface state") ((map text). lines) (getInterfaceText g)
+   textLines = ((map text). lines) (getInterfaceText g)
    
 
 interfaceColor = makeColor 1 1 1 0.8
