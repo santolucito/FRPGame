@@ -8,18 +8,8 @@ module InterfaceLogic where
 import Prelude hiding (Left,Right)
 import Types.Common
 import Types.GameObjs
-import Render.ImageIO
-import Types.HasImage
-
-import Control.Lens
-import Data.Traversable
-import Codec.Picture 
-import qualified Data.HashSet as S
 
 import FRP.Yampa
-
-import qualified Settings
-import Debug.Trace
 
 -- | How does user input through the interface change the game state
 --   pull the funciton from the game state
@@ -29,6 +19,7 @@ update = proc (gameState, input) -> do
     returnA -< gs
   
 -- |  pull out the current interfaceUpdate fxn and apply it the gameState and input
+runArrow :: (GameState, GameInput) -> GameState
 runArrow (gameState, input) = let
   f = (_interfaceUpdate$ _interface gameState) 
  in

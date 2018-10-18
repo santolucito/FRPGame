@@ -18,6 +18,7 @@ data GameObj = GameObj {
   ,_display :: Bool
   --TODO refactor to another record (gifInfo)
   ,_currentImg :: FilePath --fixed over time for static images
+  ,_collisionImg :: FilePath --fixed over time for static images 
   ,_gifPath :: Maybe FilePath --for gifs, the top level dir where component images are found
   ,_inMotion   :: Bool
   ,_dir        :: Direction

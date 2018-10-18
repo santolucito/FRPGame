@@ -6,11 +6,12 @@ import System.Random (StdGen)
 import Prelude hiding (Left,Right)
 import Types.Common
 import Types.GameObjs
-import Render.ImageIO
 
-import Control.Lens
-import Codec.Picture 
 import qualified Data.HashSet as S
+
+import GameObjs.Lamp
+import GameObjs.Coin
+import GameObjs.Ghost
 
 import Settings
 import Debug.Trace
@@ -23,6 +24,7 @@ initialState g is = GameState {
   ,_interface = Interface {_active=False,_displayText="",_interfaceUpdate=undefined}
   ,_gen = g
   ,_images = is
+  ,_highscore = 0
 }
 
 initPlayer = Player {
@@ -33,6 +35,7 @@ initPlayer = Player {
     ,_position = (-100,50)
     ,_scaleFactor = 1.6
     ,_currentImg = ""
+    ,_collisionImg = ""
     ,_gifPath = Just "Player/"
     ,_display = True}
   ,_aliveTime= 0
@@ -72,36 +75,3 @@ coinPos =
   coinSpace = 73
   top = 280
   bottom = 340
-
-makeCoin x y = GameObj {
-   _name = "coin"
-  ,_position = (x,y)
-  ,_scaleFactor = 0.8
-  ,_display = True
-  ,_currentImg = "Coin/coin.png"
-  ,_gifPath = Nothing
-  ,_inMotion = False
-  ,_dir      = Left
-}
-
-makeLamp x y = GameObj {
-   _name = "lamp"
-  ,_position = (x,y)
-  ,_scaleFactor = 0.2
-  ,_display = True
-  ,_currentImg = "Lamp/lightsOn.png"
-  ,_gifPath = Nothing
-  ,_inMotion = False
-  ,_dir      = Left
-}
-
-makeGhost (x,y,color) = GameObj {
-   _name = "ghost"
-  ,_position = (x,y)
-  ,_scaleFactor = 0.2
-  ,_display = True
-  ,_currentImg = "Ghost/ghost-"++color++".png"
-  ,_gifPath = Nothing
-  ,_inMotion = False
-  ,_dir      = Left
-}

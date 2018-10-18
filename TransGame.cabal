@@ -10,20 +10,26 @@ cabal-version:       >=1.10
 executable TransGame
   hs-source-dirs:      src
   main-is:             Main.hs
-  other-modules:       GameController                                                                                                                                                                                      
-                       GameLogic                                                                                                                                                                                           
-                       InitGameState                                                                                                                                                                                       
-                       Input.Input                                                                                                                                                                                         
-                       InterfaceLogic                                                                                                                                                                                      
-                       Render.GlossInterface                                                                                                                                                                               
-                       Render.ImageIO                                                                                                                                                                                      
-                       Render.Render                                                                                                                                                                                       
-                       Settings                                                                                                                                                                                            
-                       Types.Common                                                                                                                                                                                        
-                       Types.GameObjs                                                                                                                                                                                      
-                       Types.HasImage                                                                                                                                                                                      
-                       Types.Interface                                                                                                                                                                                     
-                       Utils  
+  other-modules:       GameController
+                       GameLogic
+                       GameLogic.Collisions
+                       GameLogic.Movement
+                       InitGameState
+                       Input.Input
+                       InterfaceLogic
+                       Render.GlossInterface
+                       Render.ImageIO
+                       Render.Render
+                       Settings
+                       Types.Common 
+                       Types.GameObjs
+                       Types.HasImage
+                       Types.Interface 
+                       Utils
+                       GameObjs.Lamp
+                       GameObjs.Coin
+                       GameObjs.Ghost
+
   build-depends:       base >=4.9
                      , gloss >=1.11
                      , gloss-juicy >= 0.2.2
@@ -39,7 +45,7 @@ executable TransGame
   default-language:    Haskell2010
   ghc-options: 
     -W 
-    -Wall 
+    -Wall
     -O2
     -threaded
     -fprof-auto

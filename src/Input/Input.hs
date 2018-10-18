@@ -6,13 +6,9 @@ module Input.Input where
 import qualified Types.Common as T
 
 import qualified Graphics.Gloss.Interface.IO.Game as G
-import FRP.Yampa (Event(..), SF, arr, returnA, dHold, accumHoldBy)
+import FRP.Yampa (Event(..), SF, returnA, accumHoldBy)
 
 import Data.Maybe
-
-import System.IO.Unsafe
-import System.Exit
-import Debug.Trace
 
 -- | Our game uses up, down, left and right arrows to make the moves, so
 -- the first thing we want to do is to parse the Gloss Event into something

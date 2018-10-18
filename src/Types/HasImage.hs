@@ -1,15 +1,12 @@
 module Types.HasImage where
 
 import Types.GameObjs
-import Types.Common
 import Settings
 
 import Control.Lens
 
 import System.IO.Unsafe --TODO remove these two
 import System.Directory
-
-import Debug.Trace
 
 -- | tough to tell where this module stops and ImageIO begins
 class HasImageSrc a where

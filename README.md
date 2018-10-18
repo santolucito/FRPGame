@@ -12,3 +12,7 @@ hp2ps -e8in -c TransGame
 
 To split gifs (which we then rerender with FRP)
 http://ezgif.com/split
+
+To get the outline
+
+   convert lightsOff.png -canny 0x1+10%+30% -negate lightsOutline.png

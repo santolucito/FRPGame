@@ -3,11 +3,9 @@ module Render.Render where
 
 import qualified Data.HashSet as S
 import Graphics.Gloss
-import Codec.Picture
 
 import Utils
 import Types.GameObjs
-import Types.Common
 import Render.ImageIO
 
 import Control.Lens (view)
@@ -61,10 +59,10 @@ placeBkgd g = let
    bkgd = snd$ getImg g $ view (board.level) g
    frameSize = 1
    frameColor = red
-   frame = (uncurry rectangleSolid) $ (\(x,y) -> (fromIntegral x, fromIntegral y)) $
+   frame = (uncurry rectangleSolid) $ (\(x',y') -> (fromIntegral x', fromIntegral y')) $
              (case bkgd of
                 Bitmap b -> bitmapSize b
-                otherwise -> trace "Non bitmap backgrounds not yet supported - defaulting to no frame" (0,0))
+                _ -> trace "Non bitmap backgrounds not yet supported - defaulting to no frame" (0,0))
    (x,y) = mapTup realToFrac$ view (board.player1.gameObj.position) g
  in
    translate (-x) (-y) $ pictures
@@ -99,8 +97,6 @@ placeInterface g (dsX',dsY') =
    ySize = 0.2
    textLines = ((map text). lines) (getInterfaceText g)
    
-
+interfaceColor :: Color
 interfaceColor = makeColor 1 1 1 0.8
 
-mapTup :: (a -> b) -> (a, a) -> (b, b)
-mapTup f (a1, a2) = (f a1, f a2)

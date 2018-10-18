@@ -1,9 +1,6 @@
 module Utils where
 
-import Types.Common
 import Types.GameObjs
-
-import Data.Maybe 
 
 -- | conveniences
 showInterface :: GameState -> Bool
@@ -17,3 +14,6 @@ isGameOver g = _status g == GameOver
 
 leveledUp :: GameState -> Bool
 leveledUp g = _status g == LevelUp
+
+mapTup :: (a -> b) -> (a, a) -> (b, b)
+mapTup f (a1, a2) = (f a1, f a2)

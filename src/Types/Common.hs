@@ -17,9 +17,12 @@ import Control.Lens (makeLenses)
 -- | the G.Picutre is used for rendering
 type ImageMap = M.Map String (Image PixelRGBA8,G.Picture)
 
+whitePixel, blackPixel :: PixelRGB8
 blackPixel = PixelRGB8 0 0 0
-blackAPixel = PixelRGBA8 0 0 0 255
 whitePixel = PixelRGB8 255 255 255
+
+blackAPixel :: PixelRGBA8
+blackAPixel = PixelRGBA8 0 0 0 255
 blackImage = (\_-> generateImage (\_ _ -> blackAPixel) 10 10)
 
 --TODO should i separate movement and interface controls?
