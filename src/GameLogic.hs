@@ -45,7 +45,11 @@ useInput :: _ -> GameState
 useInput (gameState,input,dt) = case input of
   None -> set (board.player1.gameObj.inMotion) False gameState
   Enter -> set (board.player1.gameObj.inMotion) False gameState
-  dir -> over (board.player1.gameObj) (moveObj dt dir gameState) gameState
+  Space -> set (board.player1.gameObj.inMotion) False gameState
+  dir -> over (board.player1.gameObj) (moveObj dt dir gameState) gameState 
+  --TODO dir is the catch all
+  --everytime i add a new key i need to add it here
+  --direciton and general key presses should be seperated
 
 -- TODO doesnt reset the randGen until the move is over
 -- so every ai uses the same randGen within each move 
@@ -82,11 +86,14 @@ moveObj dt d gs o = let
 --TODO maybe still relatively expensive in toList everytime, maybe cache or use fancy lenses?
 findObjCollisions :: GameState -> GameState
 findObjCollisions g = let
-  (g',objs') = mapAccumL updateCollide g (filter _display $ S.toList $ view (board.objs) g)
+  (g',objs') = mapAccumL 
+                 updateCollide 
+                 (set (interface.active) False g) --in order to track if any collision is turning on interface, turn off here
+                 (filter _display $ S.toList $ view (board.objs) g)
  in 
   set (board.objs) (S.fromList objs') g'
 
--- | If any of the pixels of an object overlap with 
+-- | If any of the pixels of an object (rn just the positon, not all pixels) overlap with 
 --   any of the positions of the player, generate a new state and object
 --   TODO, why not just return the new gameState?
 updateCollide :: GameState -> GameObj -> (GameState,GameObj)
@@ -97,30 +104,42 @@ updateCollide g o =
        "coin" -> coinCollide
        "lamp" -> lampCollide
        otherwise -> (traceShow  $ "unhandled collision with"++_name o) (g,o)
-  else (g,o)
+  --if we have not collided with anything, turn off the interface (probably will need to change this at some point)
+  --TODO somehow need a cleaner approach for this
+  else (set (interface.active) (False || (_active._interface) g) g,o) 
  where
+
   coinCollide = 
         (over (board.player1.score) (+1) g,
         set display False o)
   lampCollide =
-        (set (status) (ShowInterface $ Interface {
-              displayText = "Wow, you found a lamp! \nPress Enter to turn on, Space to turn off", 
-              interfaceUpdate = updateLamp o})
+        (set (interface) (Interface {
+              _active = True,
+              _displayText = "Wow, you found a lamp! \nPress Enter to turn on, Space to turn off", 
+              _interfaceUpdate = updateLamp o})
             g,
          o)
   ghostCollide =
-        (set (status) (ShowInterface $ Interface {
-              displayText = "Dont run into the monsters! \nPress Enter to restart", 
-              interfaceUpdate = restartGame}) 
+        (set (status) Paused $ 
+        (set (interface) (Interface {
+              _active = True,
+              _displayText = "Dont run into the monsters! \nPress Enter to restart", 
+              _interfaceUpdate = restartGame}))
             g,
          o)
 
 -- TODO Need a way to display interface and not pause
 updateLamp :: GameObj -> (GameState, GameInput) -> GameState
-updateLamp o (gameState,input) = case input of
-  Enter  -> set status InProgress $ over (board.objs) (S.insert (o{_currentImg = "Lamp/lightsOn.png"  }). S.delete o) gameState
-  Enter -> set status InProgress $ over (board.objs) (S.insert (o{_currentImg = "Lamp/lightsOff.png" }). S.delete o) gameState
-  _ -> gameState
+updateLamp o (gameState,input) = let
+  updater newPic = 
+    set (interface.active) False $ 
+    set status InProgress $ 
+    over (board.objs) (S.insert (o{_currentImg = newPic }). S.delete o) gameState
+ in
+  case input of
+    Enter  -> updater "Lamp/lightsOn.png"
+    Space -> updater "Lamp/lightsOff.png"
+    _ -> gameState
 
 restartGame :: (GameState, GameInput) -> GameState
 restartGame (gameState,input) = case input of
