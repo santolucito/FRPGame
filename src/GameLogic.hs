@@ -177,6 +177,7 @@ makeMove dt d o = let
 
 -- | Get the outline of the rectangle of the game obj
 --   TODO for pixel level detection - get outline of img of game obj
+--   to get outline, maybe require a second img? or can i just preprocess the images with imgmagik with edge detection?
 objLocs ::GameState -> GameObj -> [(Int,Int)]
 objLocs g obj = let
   (x,y,xsize,ysize) = objectDims g obj

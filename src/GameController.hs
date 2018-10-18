@@ -63,10 +63,10 @@ levelEvent = proc s -> do
 changeLevel :: StdGen -> ImageMap -> GameState -> SF GameInput GameState
 changeLevel g is gs = case _status gs of
   GameOver -> switch
-    (gameOver gs &&& after 5 ())
+    (gameOver gs &&& after 3 ())
     (const $ wholeGame g is (set highscore (_highscore gs) $ initialState g is))
   LevelUp -> switch
-    (leveling gs &&& after 5 ())
+    (leveling gs &&& after 3 ())
     (const $ wholeGame g is savedLevel) --if you level up, keep some info from last level
   InProgress -> error "Tried to change level while InProgress" 
   Paused -> error "Paused"
