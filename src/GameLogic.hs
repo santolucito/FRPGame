@@ -119,7 +119,7 @@ updateCollide g o =
 updateLamp :: GameObj -> (GameState, GameInput) -> GameState
 updateLamp o (gameState,input) = case input of
   Enter  -> set status InProgress $ over (board.objs) (S.insert (o{_currentImg = "Lamp/lightsOn.png"  }). S.delete o) gameState
-  Space -> set status InProgress $ over (board.objs) (S.insert (o{_currentImg = "Lamp/lightsOff.png" }). S.delete o) gameState
+  Enter -> set status InProgress $ over (board.objs) (S.insert (o{_currentImg = "Lamp/lightsOff.png" }). S.delete o) gameState
   _ -> gameState
 
 restartGame :: (GameState, GameInput) -> GameState
