@@ -67,6 +67,7 @@ pixelAtFromCenter i x y = let
 --   to get outline, maybe require a second img? or can i just preprocess the images with imgmagik with edge detection?
 objCollider ::GameState -> GameObj -> [(Int,Int)]
 objCollider g obj = let
+  = _collisionImg o
   (x,y,xsize,ysize) = objectDims g obj
   xsize' = xsize/2
   ysize' = ysize/2
