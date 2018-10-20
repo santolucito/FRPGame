@@ -5,8 +5,11 @@ import Types.Common
 import Types.GameObjs
 import Render.ImageIO
 
+import Utils
+
 import Control.Lens
 import Data.Traversable
+import Data.Maybe
 import Codec.Picture 
 import qualified Data.HashSet as S
 
@@ -65,9 +68,8 @@ pixelAtFromCenter i x y = let
 -- | Get the outline of the rectangle of the game obj
 --   TODO for pixel level detection - get outline of img of game obj
 --   to get outline, maybe require a second img? or can i just preprocess the images with imgmagik with edge detection?
-objCollider ::GameState -> GameObj -> [(Int,Int)]
-objCollider g obj = let
-  = _collisionImg o
+objBoxCollider :: GameState -> GameObj -> [(Int,Int)]
+objBoxCollider g obj = let
   (x,y,xsize,ysize) = objectDims g obj
   xsize' = xsize/2
   ysize' = ysize/2
@@ -77,14 +79,10 @@ objCollider g obj = let
   [(x',y') | x' <- [floor x-ceiling xsize', floor x+ceiling xsize'],
              y' <- [floor y-ceiling ysize'.. floor y+ceiling ysize']]
 
---all positions are from center of image
--- This should be unnecessary once we are using the image based colliders
-objectDims :: GameState -> GameObj -> (Double,Double,Double,Double)
-objectDims g o = let
-  objImg = fst $ getImg g o
-  (x,y) = _position o
-  sizeBy f = realToFrac $ _scaleFactor o * (fromIntegral $ f objImg)
- in
-  (x,y,sizeBy imageWidth,sizeBy imageHeight)
-  
-
+-- | try to get a pixel level rep of collision, but fall back to outline of box
+objCollider :: GameState -> GameObj -> [(Int,Int)]
+objCollider g obj =
+  fromMaybe 
+    --(trace ("Couldn't find collision image for "++(_name obj)) (objBoxCollider g obj))
+    (objBoxCollider g obj)
+    (getBlackPixelLocs g obj)

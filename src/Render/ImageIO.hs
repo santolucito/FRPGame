@@ -19,7 +19,7 @@ import Data.Maybe
 --   TODO: make this automatically read the dir
 --   REALLY TODO: this is so dumb, auto read for directory please
 levelImgSrcs :: [FilePath]
-levelImgSrcs = map (Settings.imageDir++) ["Coin/coin.png", "Ghost/ghost-orange.png", "Ghost/ghost-purple.png", "Lamp/lightsOn.png", "Lamp/lightsOff.png"]
+levelImgSrcs = map (Settings.imageDir++) ["Coin/coin.png", "Ghost/ghost-orange.png", "Ghost/ghost-purple.png", "Lamp/lightsOn.png", "Lamp/lightsOff.png", "Lamp/lightsOutline.png"]
 
 myReadImage s = do
   i <- readImage s

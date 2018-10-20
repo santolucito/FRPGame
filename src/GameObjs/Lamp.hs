@@ -39,10 +39,10 @@ updateLamp o (gameState,input) = let
     _ -> gameState
 
 lampCollide :: GameObj -> GameState -> (GameState, GameObj)
-lampCollide o g =
+lampCollide lamp g =
       (set (interface) (Interface {
             _active = True,
             _displayText = "Wow, you found a lamp! \nPress Enter to turn on, Space to turn off", 
-            _interfaceUpdate = updateLamp o})
+            _interfaceUpdate = updateLamp lamp})
           g,
-       o)
+       lamp)

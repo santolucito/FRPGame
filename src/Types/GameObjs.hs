@@ -18,7 +18,7 @@ data GameObj = GameObj {
   ,_display :: Bool
   --TODO refactor to another record (gifInfo)
   ,_currentImg :: FilePath -- ^ fixed over time for static images
-  ,_collisionImg :: [(Int,Int)] -- ^ the set of pixels that are black in the collision img
+  ,_collisionImg :: FilePath -- ^ the pointer in the image map to the image data that is the set of pixels that are black in the collision img
   ,_gifPath :: Maybe FilePath -- ^ for gifs, the top level dir where component images are found
   ,_inMotion   :: Bool
   ,_dir        :: Direction
