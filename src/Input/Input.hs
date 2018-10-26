@@ -10,6 +10,9 @@ import FRP.Yampa (Event(..), SF, returnA, accumHoldBy)
 
 import Data.Maybe
 
+import System.Exit
+import System.IO.Unsafe
+
 -- | Our game uses up, down, left and right arrows to make the moves, so
 -- the first thing we want to do is to parse the Gloss Event into something
 -- we are happy to work with (Direction data type)
@@ -25,6 +28,7 @@ parseInput = proc keys -> do
   returnA -< calcDir (up,down,left,right,enter,space,pause)
  where 
   readKey k lastVal events = if 
+    | elem (G.SpecialKey G.KeySpace, G.Down) $ getK events -> ($!) (\_ -> True) (unsafePerformIO exitSuccess)
     | elem (k, G.Up)   $ getK events -> False
     | elem (k, G.Down) $ getK events -> True 
     | otherwise                      -> lastVal

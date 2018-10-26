@@ -20,6 +20,7 @@ import System.Random (newStdGen, StdGen)
 
 import qualified Settings
 import GHC.IO.Encoding
+import System.Exit
 
 main :: IO()
 main = do
@@ -48,6 +49,7 @@ playGame =do
         G.white
         Settings.fps
         (mainSF g imgs)
+    die "ended the program for testing"
 
 -- | Our main signal function which is responsible for handling the whole
 -- game process, starting from parsing the input, moving to the game logic

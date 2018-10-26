@@ -24,6 +24,7 @@ executable TransGame
                        Types.Common 
                        Types.GameObjs
                        Types.HasImage
+                       Types.Image
                        Types.Interface 
                        Utils
                        GameObjs.Lamp
@@ -49,7 +50,8 @@ executable TransGame
     -O2
     -threaded
     -fprof-auto
-    -- -prof
+    -prof
     -rtsopts
-    "-with-rtsopts= -s -h -i0.1" 
+    -fexternal-interpreter
+    "-with-rtsopts= -p -s -h -i0.1" 
 

@@ -1,29 +1,17 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Types.Common where
+module Types.Common 
+  (module Types.Image,
+   module Types.Common)
+   where
 
 --import FRP.Yampa
 import qualified Graphics.Gloss.Interface.IO.Game as G
 
 import GHC.Generics
 
-import qualified Data.Map as M
-import Codec.Picture
-import Control.Lens (makeLenses)
-
--- | A map between image file names to ...
--- | the Image (fst) is used for look at the data of the picture
--- | the G.Picutre is used for rendering
-type ImageMap = M.Map String (Image PixelRGBA8,G.Picture)
-
-whitePixel, blackPixel :: PixelRGB8
-blackPixel = PixelRGB8 0 0 0
-whitePixel = PixelRGB8 255 255 255
-
-blackAPixel :: PixelRGBA8
-blackAPixel = PixelRGBA8 0 0 0 255
-blackImage = (\_-> generateImage (\_ _ -> blackAPixel) 10 10)
+import Types.Image
 
 --TODO should i separate movement and interface controls?
 data Direction = 

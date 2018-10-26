@@ -12,7 +12,9 @@ import Graphics.Gloss.Juicy
 import Codec.Picture
 
 import qualified Data.Map as M --TODO probably should be a hash map?
+import qualified Data.HashSet as S
 import Data.Maybe
+
 --import Debug.Trace
 
 -- | Where in the file system do images come from
@@ -30,7 +32,11 @@ boardImgMap = do
  lvlImgPic <- myReadImage (Settings.imageDir++Settings.levelImageSrc)
  lvlImgCollisions <- myReadImage (Settings.imageDir++Settings.levelCollisionImageSrc)
  let pic = fromImageRGBA8$ lvlImgPic
- return $ M.singleton (Settings.imageDir++Settings.levelImageSrc) (lvlImgCollisions, pic)
+ let idata = ImageData {
+    glossImage = pic 
+  , pixelData = lvlImgCollisions
+  , blackPixelLocs = S.empty }
+ return $ M.singleton (Settings.imageDir++Settings.levelImageSrc) idata
 
 playerImgSrcs :: [FilePath]
 playerImgSrcs = let
@@ -45,15 +51,31 @@ makeImgMap fileNames = do
  allImages <- mapM readImage fileNames --TODO use myReadImage
  let imgs = map (either blackImage convertRGBA8) allImages -- the image data
  let pics = map fromImageRGBA8 imgs  -- the pic to display
- let toMap ks vs = M.fromList$ zip ks vs
- return $ toMap fileNames (zip imgs pics)
+ let idatas = zipWith (\i p -> ImageData {
+          glossImage = p
+        , pixelData = i
+        , blackPixelLocs = getBlackPixelIndicies i}) imgs pics
+ return $ M.fromList $ zip fileNames idatas
+
+-- | Get the location of the black pixels in an image
+--   Used for collision detection
+getBlackPixelIndicies :: Image PixelRGBA8 -> S.HashSet (Int,Int)
+getBlackPixelIndicies allPixels = let
+  checkPixel i x y = 
+    if (pixelAt i x y == blackAPixel) 
+    then Just (x,y) 
+    else Nothing 
+  f i = catMaybes $ map (\(x,y) -> checkPixel i x y)
+       [(x,y) | x <- [0..imageWidth i-1], y <- [0..imageHeight i-1]]
+ in
+   S.fromList $ f allPixels
 
  -- | get the chacter state image given a player state
  --   we also simulate a gif here (TODO: do we tho?)
-getImg :: HasImageSrc a => GameState -> a -> (Image PixelRGBA8,G.Picture)
+getImg :: HasImageSrc a => GameState -> a -> ImageData 
 getImg g o = let
   s = getImageSrc o
-  allImgs =  _images g
+  allImgs = _images g
   myImg = M.lookup (Settings.imageDir ++ s) allImgs
  in
   fromMaybe (error (("Could not find image : "++ (show (Settings.imageDir++s)))++" \nWithin available image paths : "++show (M.keys allImgs))) myImg

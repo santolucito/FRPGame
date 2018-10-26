@@ -15,5 +15,8 @@ cabal.config
 *.pdf
 *.aux
 
+*.prof
+*.ps
+
 *.mp3
 *~

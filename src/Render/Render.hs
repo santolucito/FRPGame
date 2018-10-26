@@ -6,6 +6,7 @@ import Graphics.Gloss
 
 import Utils
 import Types.GameObjs
+import Types.Image
 import Render.ImageIO
 
 import Control.Lens (view)
@@ -35,7 +36,7 @@ placeGameObjs g = let
    playerPos = view (board.player1.gameObj.position) g
    objScale o = scale (_scaleFactor o) (_scaleFactor o)
    objTrans o = (uncurry translate) $ mapTup realToFrac $ liftTup (-) (_position o) playerPos
-   placeObj o = objTrans o $ objScale o $ snd $ getImg g o
+   placeObj o = objTrans o $ objScale o $ glossImage $ getImg g o
  in
    map placeObj objsToDisplay -- need to reverse to get ghosts on top for some reason (edit, seems to be fine without, was this on top of coins?)
 
@@ -47,7 +48,7 @@ liftTup f (x,y) (x',y')= (f x x', f y y')
 --   TODO merge this with placeGameObjs
 placePlayer :: GameState -> Picture
 placePlayer g = let
-   p = snd $ getImg g $ view (board.player1) g
+   p = glossImage $ getImg g $ view (board.player1) g
    --(x,y) = mapTup fromIntegral ((view (board.player1.position)) g)
    sf = view (board.player1.gameObj.scaleFactor) g
  in
@@ -56,7 +57,7 @@ placePlayer g = let
 -- | move the background around the player
 placeBkgd :: GameState -> Picture
 placeBkgd g = let
-   bkgd = snd$ getImg g $ view (board.level) g
+   bkgd = glossImage $ getImg g $ view (board.level) g
    frameSize = 1
    frameColor = red
    frame = (uncurry rectangleSolid) $ (\(x',y') -> (fromIntegral x', fromIntegral y')) $

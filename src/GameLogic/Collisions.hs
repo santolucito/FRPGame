@@ -9,7 +9,6 @@ import Utils
 
 import Control.Lens
 import Data.Traversable
-import Data.Maybe
 import Codec.Picture 
 import qualified Data.HashSet as S
 
@@ -47,7 +46,7 @@ updateCollide g o =
 
 wallCollision :: GameState -> GameObj -> Bool
 wallCollision gs o = let
-  walls = fst $ getImg gs $ view (board.level) gs
+  walls = pixelData $ getImg gs $ view (board.level) gs
   boardPixels = map (\(x,y) -> pixelAtFromCenter walls x y) (objCollider gs o)
  in 
   any (==blackAPixel) (boardPixels)
@@ -80,9 +79,10 @@ objBoxCollider g obj = let
              y' <- [floor y-ceiling ysize'.. floor y+ceiling ysize']]
 
 -- | try to get a pixel level rep of collision, but fall back to outline of box
-objCollider :: GameState -> GameObj -> [(Int,Int)]
+objCollider :: GameState -> GameObj -> [(Int,Int)] --TODO migrate HashSet type back up this chain of fxns
 objCollider g obj =
-  fromMaybe 
+  maybe 
     --(trace ("Couldn't find collision image for "++(_name obj)) (objBoxCollider g obj))
     (objBoxCollider g obj)
+    S.toList 
     (getBlackPixelLocs g obj)

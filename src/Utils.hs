@@ -4,10 +4,8 @@ import Types.GameObjs
 import Types.Common
 import Render.ImageIO
 
-
-import Data.Maybe
-import Data.List
 import qualified Data.Map as M
+import qualified Data.HashSet as S
 import Codec.Picture
 
 import Debug.Trace
@@ -30,16 +28,19 @@ mapTup f (a1, a2) = (f a1, f a2)
 
 -- | Get the location of the black pixels in an image
 --   Used for collision detection
-getBlackPixelLocs :: GameState -> GameObj -> Maybe [(Int,Int)]
+getBlackPixelLocs :: GameState -> GameObj -> Maybe (S.HashSet (Int,Int))
 getBlackPixelLocs g o = let
   is = _images g
   iData = M.lookup ("pics/"++(_collisionImg o)) is
   (x,y,xsize,ysize) = objectDims g o
-  getLocs i = map (\(x',y') -> (floor x+x'-(floor$ xsize/2),floor y+y'-(floor $ ysize/2))) $ nub $ map (mapTup (\v -> floor $ fromIntegral v*_scaleFactor o)) $ catMaybes $ map (\(x,y) -> if (pixelAt i x y == blackAPixel) then Just (x,y) else Nothing) [(x,y) | x <- [0..imageWidth i-1], y <- [0..imageHeight i-1]]
+  adjustToScale v = floor $ fromIntegral v * _scaleFactor o
+  getLocs i = 
+     S.map (\(x',y') -> (floor x+x'-(floor$ xsize/2),floor y+y'-(floor $ ysize/2))) $ 
+     S.map (mapTup adjustToScale) $ blackPixelLocs i
  in
   case iData of
     Nothing -> Nothing
-    Just i -> Just $ getLocs $ fst i
+    Just i -> Just $ getLocs i
 
 -- | Inspired by superCollider
 -- map a value from one linear range to another linear range
@@ -57,7 +58,7 @@ linlin (oldMin,oldMax) (newMin,newMax) v = let
 -- This should be unnecessary once we are using the image based colliders
 objectDims :: GameState -> GameObj -> (Double,Double,Double,Double)
 objectDims g o = let
-  objImg = fst $ getImg g o
+  objImg = pixelData $ getImg g o
   (x,y) = _position o
   sizeBy f = realToFrac $ _scaleFactor o * (fromIntegral $ f objImg)
  in
