@@ -38,9 +38,9 @@ runLevel state = proc input -> do
 
 update :: SF (GameState, GameInput) GameState
 update = proc (gs,gi) -> do
-  nextGs <- if showInterface gs
-            then InterfaceLogic.update -< (gs,gi)
-            else arr id -< gs
+  nextGs  <- if showInterface gs
+             then InterfaceLogic.update -< (gs,gi)
+             else arr id -< gs
   nextGs' <- if (_status gs/=Paused)
              then GameLogic.update      -< (nextGs,gi)
              else arr id -< nextGs
