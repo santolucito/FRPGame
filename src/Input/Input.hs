@@ -42,8 +42,10 @@ parseInput = proc keys -> do
   getK' (G.EventKey k d _ _ ) = Just (k,d)
   getK' _ = Nothing
 
+  -- Note that ordering matters here
   calcDir (up,down,left,right,enter,space,pause,exit) = if 
-    | enter         ->  T.Enter --TODO this isnt really a direction...
+     --TODO these arent really directions. maybe GameInput should be of type (Direction,ControlInput)?
+    | enter         ->  T.Enter
     | space         ->  T.Space 
     | pause         ->  T.Pause
     -- this exits in a way that cabal profiling can handle

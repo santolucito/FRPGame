@@ -19,7 +19,6 @@ import qualified GameObjs.Ghost
 import Debug.Trace
 
 
---TODO maybe still relatively expensive in toList everytime, maybe cache or use fancy lenses?
 findObjCollisions :: GameState -> GameState
 findObjCollisions g = let
   (g',objs') = mapAccumL 

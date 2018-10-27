@@ -1,3 +1,5 @@
+{-# LANGUAGE MultiWayIf #-}
+
 module GameObjs.Lamp where
 
 import Prelude hiding (Left,Right)
@@ -25,24 +27,21 @@ makeLamp x y = GameObj {
 }
 
 
--- TODO Need a way to display interface and not pause
 updateLamp :: GameObj -> (GameState, GameInput) -> GameState
 updateLamp o (gameState,input) = let
-  updater newPic = 
-    set (interface.active) False $ 
-    set status InProgress $ 
-    over (board.objs) (S.insert (o{_currentImg = newPic }). S.delete o) gameState
+  newPic = if
+    | _currentImg o == "Lamp/lightsOn.png"  -> "Lamp/lightsOff.png"
+    | _currentImg o == "Lamp/lightsOff.png" -> "Lamp/lightsOn.png"
  in
   case input of
-    Enter  -> updater "Lamp/lightsOn.png"
-    Space -> updater "Lamp/lightsOff.png"
+    Space -> over (board.objs) (S.insert (o{_currentImg = newPic }). S.delete o) gameState
     _ -> gameState
 
 lampCollide :: GameObj -> GameState -> (GameState, GameObj)
 lampCollide lamp g =
       (set (interface) (Interface {
             _active = True,
-            _displayText = "Wow, you found a lamp! \nPress Enter to turn on, Space to turn off", 
+            _displayText = "Wow, you found a lamp! \nPress Space to turn on/off", 
             _interfaceUpdate = updateLamp lamp})
           g,
        lamp)
