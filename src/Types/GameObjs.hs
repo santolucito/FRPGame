@@ -14,7 +14,7 @@ import GHC.Generics
 data GameObj = GameObj {
    _name :: String --Maybe should also have id?
   ,_position :: (Double,Double)
-  ,_scaleFactor :: Float
+  ,_scaleFactor :: Double
   ,_display :: Bool
   --TODO refactor to another record (gifInfo)
   ,_currentImg :: FilePath -- ^ fixed over time for static images

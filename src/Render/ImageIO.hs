@@ -21,7 +21,10 @@ import Data.Maybe
 --   TODO: make this automatically read the dir
 --   REALLY TODO: this is so dumb, auto read for directory please
 levelImgSrcs :: [FilePath]
-levelImgSrcs = map (Settings.imageDir++) ["Coin/coin.png", "Ghost/ghost-orange.png", "Ghost/ghost-purple.png", "Lamp/lightsOn.png", "Lamp/lightsOff.png", "Lamp/lightsOutline.png"]
+levelImgSrcs = map (Settings.imageDir++) 
+   [ "Coin/coin.png", "Coin/outline.png"
+   , "Ghost/ghost-orange.png", "Ghost/ghost-purple.png", "Ghost/outline.png"
+   , "Lamp/lightsOn.png", "Lamp/lightsOff.png", "Lamp/lightsOutline.png"]
 
 myReadImage s = do
   i <- readImage s
@@ -42,7 +45,7 @@ playerImgSrcs :: [FilePath]
 playerImgSrcs = let
   f d = map (\x-> d++"/frame_"++(show x)++"_delay-0.06s.gif") [0..9]
  in
-  map ("pics/Player/"++) (concatMap f  ["Right", "Down", "Left", "Up", "UpLeft", "UpRight", "DownLeft", "DownRight", "None"])--TODO ensure all these frames exist
+  map ("pics/Player/"++) (["outline.gif"] ++ concatMap f  ["Right", "Down", "Left", "Up", "UpLeft", "UpRight", "DownLeft", "DownRight", "None"])--TODO ensure all these frames exist
 
 -- | we need different images for differnet character states
 --   use a map from state names (string from file name) to image

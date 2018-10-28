@@ -28,15 +28,16 @@ mapTup f (a1, a2) = (f a1, f a2)
 
 -- | Get the location of the black pixels in an image
 --   Used for collision detection
-getBlackPixelLocs :: GameState -> GameObj -> Maybe (S.HashSet (Int,Int))
+getBlackPixelLocs :: GameState -> GameObj -> Maybe [(Int,Int)]
 getBlackPixelLocs g o = let
   is = _images g
   iData = M.lookup ("pics/"++(_collisionImg o)) is
   (x,y,xsize,ysize) = objectDims g o
-  adjustToScale v = floor $ fromIntegral v * _scaleFactor o
-  getLocs i = 
-     S.map (\(x',y') -> (floor x+x'-(floor$ xsize/2),floor y+y'-(floor $ ysize/2))) $ 
-     S.map (mapTup adjustToScale) $ blackPixelLocs i
+  adjustToScale v = (fromIntegral v :: Double) * _scaleFactor o
+  getLocs i = map 
+     (\(x',y') -> (floor (x+(adjustToScale x')-(xsize/2)),
+                   floor (y+(adjustToScale y')-(ysize/2)))) $ 
+     S.toList $ blackPixelLocs i
  in
   case iData of
     Nothing -> Nothing

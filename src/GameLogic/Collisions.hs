@@ -16,15 +16,17 @@ import qualified GameObjs.Lamp
 import qualified GameObjs.Coin
 import qualified GameObjs.Ghost
 
+import Data.Maybe (fromMaybe)
+
 import Debug.Trace
 
 
 findObjCollisions :: GameState -> GameState
 findObjCollisions g = let
   (g',objs') = mapAccumL 
-                 updateCollide 
-                 (set (interface.active) False g) --in order to track if any collision is turning on interface, turn off here
-                 (filter _display $ S.toList $ view (board.objs) g)
+                 updateCollide --update the collision of every object
+                 (set (interface.active) False g) --and along the way track if any collision is turning on/off interface in gamestate
+                 (S.toList $ S.filter _display $ view (board.objs) g)
  in 
   set (board.objs) (S.fromList objs') g'
 
@@ -80,8 +82,7 @@ objBoxCollider g obj = let
 -- | try to get a pixel level rep of collision, but fall back to outline of box
 objCollider :: GameState -> GameObj -> [(Int,Int)] --TODO migrate HashSet type back up this chain of fxns
 objCollider g obj =
-  maybe 
+  fromMaybe 
     --(trace ("Couldn't find collision image for "++(_name obj)) (objBoxCollider g obj))
     (objBoxCollider g obj)
-    S.toList 
     (getBlackPixelLocs g obj)

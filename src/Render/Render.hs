@@ -34,7 +34,7 @@ placeGameObjs :: GameState -> [Picture]
 placeGameObjs g = let
    objsToDisplay = S.toList $ S.filter (_display) $ view (board.objs) g
    playerPos = view (board.player1.gameObj.position) g
-   objScale o = scale (_scaleFactor o) (_scaleFactor o)
+   objScale o = scale (realToFrac $ _scaleFactor o) (realToFrac $ _scaleFactor o)
    objTrans o = (uncurry translate) $ mapTup realToFrac $ liftTup (-) (_position o) playerPos
    placeObj o = objTrans o $ objScale o $ glossImage $ getImg g o
  in
@@ -50,7 +50,7 @@ placePlayer :: GameState -> Picture
 placePlayer g = let
    p = glossImage $ getImg g $ view (board.player1) g
    --(x,y) = mapTup fromIntegral ((view (board.player1.position)) g)
-   sf = view (board.player1.gameObj.scaleFactor) g
+   sf = realToFrac $ view (board.player1.gameObj.scaleFactor) g
  in
    translate 0 0 $ scale sf sf p
      
