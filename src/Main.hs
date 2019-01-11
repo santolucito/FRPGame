@@ -11,6 +11,10 @@ import Render.Render
 import Render.GlossInterface
 import Render.ImageIO
 
+import Render.Audio
+import qualified Sound.Tidal.Context as T
+import System.Process
+
 import Input.Input
 
 import FRP.Yampa (Event(..), SF, (<<<), returnA, arr)
@@ -22,18 +26,21 @@ import qualified Settings
 import GHC.IO.Encoding
 import System.Exit
 
+
 main :: IO()
 main = do
   setLocaleEncoding utf8
   setFileSystemEncoding utf8
   setForeignEncoding utf8  
+  _ <- spawnCommand "sclang boot.scd"
   playGame
 
 -- | load a random numbe gen
 --   NB : read in every image we will ever need
 --   this might use up too much memor if the game uses many images since we have no way to evict an image (I think)
 playGame :: IO ()
-playGame =do
+playGame = do
+
     g <- newStdGen
 
     levelImgs <- makeImgMap levelImgSrcs
@@ -55,8 +62,10 @@ playGame =do
 -- game process, starting from parsing the input, moving to the game logic
 -- based on that input and finally drawing the resulting game state to
 -- Gloss' Picture
-mainSF :: StdGen -> ImageMap -> SF (Event [InputEvent],(Int,Int)) G.Picture
+mainSF :: StdGen -> ImageMap -> SF (Event [InputEvent],(Int,Int)) (G.Picture, T.Pattern T.ControlMap)
 mainSF g is = proc (es,displaySize) -> do
   updatedGs <- wholeGame g is (initialState g is) <<< parseInput -< es
   pic <- arr drawGame -< (updatedGs,displaySize)
-  returnA -< pic
+  newTidalPattern <- arr calculateAudio -< updatedGs
+  returnA -< (pic, newTidalPattern)
+

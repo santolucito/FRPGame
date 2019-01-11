@@ -11,22 +11,28 @@ import qualified Graphics.Gloss.Interface.IO.Game as G
 import Data.IORef
 import System.Mem
 
+import qualified Sound.Tidal.Context as T
+
 playYampa :: 
     Display ->
     Color ->
     Int ->
-    SF (Event [G.Event], (Int,Int)) Picture ->
+    SF (Event [G.Event], (Int,Int)) (Picture, T.Pattern T.ControlMap) ->
     IO ()
 
 playYampa display color frequency network = 
   do
+    tidal <- T.startTidal (T.superdirtTarget {T.oLatency = 0.1, T.oAddress = "127.0.0.1", T.oPort = 57120}) (T.defaultConfig {T.cFrameTimespan = 1/20})
+    let p = T.streamReplace tidal
+
     vPic <- newIORef Blank
     events <- newIORef NoEvent
 
     handle <- reactInit 
         (return (NoEvent, Settings.windowSize))
-        (\_ changed pic -> do
+        (\_ changed (pic, pat) -> do
             if changed then vPic `atomicWriteIORef` pic else return ()
+            p 1 pat
             return False)
         network
     
