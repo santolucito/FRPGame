@@ -1,13 +1,23 @@
 [![Alt text](https://img.youtube.com/vi/4mdXDXMSkAE/0.jpg)](https://www.youtube.com/watch?v=4mdXDXMSkAE)
 
 
-## A Game built in Haskell with FRP
+# A Game built in Haskell with FRP
 
+## Install
 
-to run:
+Requires SuperCollider and Tidal to be installed
 
+```
+cabal install
+```
+
+## Playing
+
+```
 cabal run TransGame
+```
 
+## Analysis
 
 to then get the haskell profiling report
 
