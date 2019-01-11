@@ -8,6 +8,7 @@ import Control.Lens
 
 makeCoin x y = GameObj {
    _name = "coin"
+  ,_objectId = 0
   ,_position = (x,y)
   ,_scaleFactor = 0.8
   ,_display = True

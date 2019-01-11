@@ -13,9 +13,10 @@ import qualified Data.HashSet as S
 name :: String
 name = "lamp"
 
-makeLamp :: Double -> Double -> GameObj
-makeLamp x y = GameObj {
+makeLamp :: Int -> Double -> Double -> GameObj
+makeLamp objId x y = GameObj {
    _name = GameObjs.Lamp.name
+  ,_objectId = objId
   ,_position = (x,y)
   ,_scaleFactor = 0.2
   ,_display = True
@@ -26,6 +27,12 @@ makeLamp x y = GameObj {
   ,_dir      = Left
 }
 
+isLampOn :: Int -> GameState -> Bool
+isLampOn objId g =
+  not $ S.null $ S.filter (\o -> _name o == ("lamp") && 
+                                 _objectId o == objId && 
+                                 _currentImg o == "Lamp/lightsOn.png") $ 
+                          (_objs. _board) g
 
 updateLamp :: GameObj -> (GameState, GameInput) -> GameState
 updateLamp o (gameState,input) = let

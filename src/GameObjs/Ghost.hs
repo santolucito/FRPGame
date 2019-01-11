@@ -8,6 +8,7 @@ import Control.Lens
 
 makeGhost (x,y,color) = GameObj {
    _name = "ghost"
+  ,_objectId = 0
   ,_position = (x,y)
   ,_scaleFactor = 0.2
   ,_display = True

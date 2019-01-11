@@ -20,6 +20,7 @@ executable TransGame
                        Render.GlossInterface
                        Render.ImageIO
                        Render.Render
+                       Render.Audio
                        Settings
                        Types.Common 
                        Types.GameObjs

@@ -12,7 +12,8 @@ import Data.Hashable
 import GHC.Generics
 
 data GameObj = GameObj {
-   _name :: String --Maybe should also have id?
+   _name :: String
+  ,_objectId :: Int
   ,_position :: (Double,Double)
   ,_scaleFactor :: Double
   ,_display :: Bool

@@ -30,6 +30,7 @@ initialState g is = GameState {
 initPlayer = Player {
   _gameObj  = GameObj {
     _name = "player"
+    ,_objectId = 0
     ,_dir      = None
     ,_inMotion = False
     ,_position = (-100,50)
@@ -49,7 +50,7 @@ emptyBoard is = Board {
 
 initObjs n = S.fromList (
    --map (uncurry makeCoin) coinPos
-   [(makeLamp 100 200)] ++
+   [(makeLamp 1 100 200)] ++
    (map makeGhost $ take n [
         (130,300,"orange"),
         (-250,80,"orange"),

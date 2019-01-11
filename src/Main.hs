@@ -25,14 +25,17 @@ import System.Random (newStdGen, StdGen)
 import qualified Settings
 import GHC.IO.Encoding
 import System.Exit
-
+import System.Environment
+import Control.Monad
 
 main :: IO()
 main = do
   setLocaleEncoding utf8
   setFileSystemEncoding utf8
   setForeignEncoding utf8  
-  _ <- spawnCommand "sclang boot.scd"
+  a <- getArgs
+  -- pass any command line arg in to enable audio
+  when (length a > 0) $ spawnCommand "sclang boot.scd" >> return ()
   playGame
 
 -- | load a random numbe gen
