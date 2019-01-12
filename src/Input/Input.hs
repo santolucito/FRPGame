@@ -49,6 +49,7 @@ parseInput = proc keys -> do
     | space         ->  T.Space 
     | pause         ->  T.Pause
     -- this exits in a way that cabal profiling can handle
+    -- TODO kill the running sclang instance
     | exit          ->  ($!) (\_ -> undefined) (unsafePerformIO exitSuccess) 
     | up && left    ->  T.UpLeft
     | up && right   ->  T.UpRight

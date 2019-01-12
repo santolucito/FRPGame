@@ -22,7 +22,8 @@ playYampa ::
 
 playYampa display color frequency network = 
   do
-    tidal <- T.startTidal (T.superdirtTarget {T.oLatency = 0.1, T.oAddress = "127.0.0.1", T.oPort = 57120}) (T.defaultConfig {T.cFrameTimespan = 1/20})
+    --TODO this doesn't belong here
+    tidal <- T.startTidal (T.superdirtTarget {T.oLatency = 0.6, T.oAddress = "127.0.0.1", T.oPort = 57120}) (T.defaultConfig {T.cFrameTimespan = 1/10})
     let p = T.streamReplace tidal
 
     vPic <- newIORef Blank

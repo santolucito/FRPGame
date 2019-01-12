@@ -17,6 +17,14 @@ cabal install
 cabal run TransGame
 ```
 
+for now, after playing, you need to manually kill sclang, eg
+
+```
+mark@mark-PC:~/Github/FRPGame$ ps -A | grep sclang
+11564 pts/0    00:00:01 sclang
+mark@mark-PC:~/Github/FRPGame$ kill 11564
+```
+
 ## Analysis
 
 to then get the haskell profiling report

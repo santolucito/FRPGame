@@ -1,0 +1,7 @@
+d1 $ sometimes brak $ sound "[~ SynDr:1*2] [~ SynDr:8]"
+
+d2 $ s "SynDr:4*2" # vowel "e o"
+
+d3 $ degradeBy 0.7 $ s "[SynDr:7]*8" # gain 0.7
+
+hush

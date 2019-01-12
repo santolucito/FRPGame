@@ -8,6 +8,8 @@ import Debug.Trace
 --levelCollisionImageSrc = "houseMapLines.png" 
 levelImageSrc = "floorplans/house1.png" 
 levelCollisionImageSrc = "floorplans/house1.png" 
+--levelImageSrc = "stoneash.png" 
+--levelCollisionImageSrc = "stoneash.png" 
 imageDir = "pics/"
 fps = 60 :: Int
 speed = 200 :: Double --TODO this is for every obj, make speed option by object name
