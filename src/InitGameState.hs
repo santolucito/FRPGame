@@ -12,6 +12,7 @@ import qualified Data.HashSet as S
 import GameObjs.Lamp
 import GameObjs.Coin
 import GameObjs.Ghost
+import GameObjs.Mixer
 
 import Settings
 import Debug.Trace
@@ -50,7 +51,7 @@ emptyBoard is = Board {
 
 initObjs n = S.fromList (
    --map (uncurry makeCoin) coinPos
-   [(makeLamp 1 100 200)] ++
+   [(makeMixer 1 100 200)] ++
    (map makeGhost $ take n [
         (130,300,"orange"),
         (-250,80,"orange"),

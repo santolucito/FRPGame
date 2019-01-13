@@ -5,6 +5,9 @@ import Settings
 
 import Control.Lens
 
+import Data.Char
+import Numeric
+
 import System.IO.Unsafe --TODO remove these two
 import System.Directory
 
@@ -44,10 +47,15 @@ updateGif time o = let
 --this is of course a terrible idea, but it should work
 getGifFrame :: Double -> FilePath -> FilePath
 getGifFrame time fdir = let
-  numFrames = length $ unsafePerformIO $ listDirectory (Settings.imageDir ++ fdir) --TODO if this isnt being cached, move somewhere else 
-  thisFrame = (floor (time * 10)) `mod` numFrames
+  listOfFiles = unsafePerformIO $ listDirectory (Settings.imageDir ++ fdir) --TODO if this isnt being cached, move somewhere else 
+  extension = reverse $ takeWhile (/='.') $ reverse $ head listOfFiles
+  -- extract gif delay value
+  gifDelay = read ((reverse. takeWhile (\c -> c=='.' || isDigit c). drop (length ("s."++extension)). reverse) $ head listOfFiles) :: Double
+  numFrames = length listOfFiles
+  thisFrame = (floor (time / gifDelay)) `mod` numFrames
  in
-  fdir ++"/frame_" ++ (show thisFrame) ++ "_delay-0.06s.gif"
+  fdir ++"/frame_" ++ (show thisFrame) ++ "_delay-"++(showFullPrecision gifDelay)++"s."++extension
    
-  
- 
+showFullPrecision :: Double -> String
+showFullPrecision x = showFFloat Nothing x ""
+

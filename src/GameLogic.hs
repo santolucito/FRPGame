@@ -16,6 +16,8 @@ import GameLogic.Movement
 
 import FRP.Yampa
 
+import qualified Data.HashSet as H
+
 update :: SF (GameState, GameInput) GameState
 update = proc (gameState, input) -> 
   do
@@ -35,4 +37,5 @@ update = proc (gameState, input) ->
 
 trackTime :: Time -> GameState -> GameState
 trackTime t g = 
+  over (board.objs) (H.map (updateGif t)) $
   over (board.player1.gameObj) (updateGif t) g

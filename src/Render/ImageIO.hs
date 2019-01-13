@@ -21,7 +21,7 @@ import Data.Maybe
 --   TODO: make this automatically read the dir
 --   REALLY TODO: this is so dumb, auto read for directory please
 levelImgSrcs :: [FilePath]
-levelImgSrcs = map (Settings.imageDir++) 
+levelImgSrcs = mixerImgSrcs ++ map (Settings.imageDir++) 
    [ "Coin/coin.png", "Coin/outline.png"
    , "Ghost/ghost-orange.png", "Ghost/ghost-purple.png", "Ghost/outline.png"
    , "Lamp/lightsOn.png", "Lamp/lightsOff.png", "Lamp/lightsOutline.png"]
@@ -40,6 +40,12 @@ boardImgMap = do
   , pixelData = lvlImgCollisions
   , blackPixelLocs = S.empty }
  return $ M.singleton (Settings.imageDir++Settings.levelImageSrc) idata
+
+mixerImgSrcs :: [FilePath]
+mixerImgSrcs = let
+  f d = map (\x-> d++"/frame_"++(show x)++"_delay-0.3s.png") [0..3]
+ in
+  map ("pics/Mixer/"++) (concatMap f  ["None"])
 
 playerImgSrcs :: [FilePath]
 playerImgSrcs = let

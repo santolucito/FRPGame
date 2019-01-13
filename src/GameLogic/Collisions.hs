@@ -15,6 +15,7 @@ import qualified Data.HashSet as S
 import qualified GameObjs.Lamp
 import qualified GameObjs.Coin
 import qualified GameObjs.Ghost
+import qualified GameObjs.Mixer
 
 import Data.Maybe (fromMaybe)
 
@@ -40,6 +41,7 @@ updateCollide g o =
        "ghost" ->  GameObjs.Ghost.ghostCollide o g
        "coin" -> GameObjs.Coin.coinCollide o g 
        "lamp" -> GameObjs.Lamp.lampCollide o g
+       "mixer" -> GameObjs.Mixer.mixerCollide o g
        _ -> (traceShow  $ "unhandled collision with " ++ _name o) (g,o)
   --if we have not collided with anything, turn off the interface (probably will need to change this at some point)
   --TODO somehow need a cleaner approach for this

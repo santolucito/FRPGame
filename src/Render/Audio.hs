@@ -7,7 +7,7 @@ import Sound.Tidal.Context
 import Sound.Tidal.ParseBP
 
 import Types.GameObjs
-import GameObjs.Lamp
+import GameObjs.Mixer
 import Utils
 
 calculateAudio :: GameState -> Pattern ControlMap
@@ -19,5 +19,5 @@ calculateAudio gs = do
   if 
     | isGameOver gs -> silence
     | _status gs == Paused  -> (stack [p1,p2]) # lpf "200"
-    | isLampOn 1 gs -> stack [p1,p2,p3]
+    | isMixerOn 1 gs -> stack [p1,p2,p3]
     | True -> stack [p1,p2]

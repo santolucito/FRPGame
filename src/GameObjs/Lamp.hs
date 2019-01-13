@@ -18,13 +18,13 @@ makeLamp objId x y = GameObj {
    _name = GameObjs.Lamp.name
   ,_objectId = objId
   ,_position = (x,y)
-  ,_scaleFactor = 0.2
+  ,_scaleFactor = 2
   ,_display = True
   ,_currentImg = "Lamp/lightsOn.png"
   ,_collisionImg = "Lamp/lightsOutline.png"
-  ,_gifPath = Nothing
-  ,_inMotion = False
-  ,_dir      = Left
+  ,_gifPath = Just "Mixer/"
+  ,_inMotion = True
+  ,_dir      = None
 }
 
 isLampOn :: Int -> GameState -> Bool
