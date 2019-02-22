@@ -35,14 +35,14 @@ main = do
   setForeignEncoding utf8  
   a <- getArgs
   -- pass any command line arg in to enable audio
-  when (length a > 0) $ spawnCommand "sclang boot.scd" >> return ()
-  playGame
+  scPID <- if (length a > 0) then spawnCommand "sclang boot.scd" >>= (return . Just) else return Nothing
+  playGame $ scPID
 
 -- | load a random numbe gen
 --   NB : read in every image we will ever need
 --   this might use up too much memor if the game uses many images since we have no way to evict an image (I think)
-playGame :: IO ()
-playGame = do
+playGame :: Maybe ProcessHandle -> IO ()
+playGame scPID = do
 
     g <- newStdGen
 
@@ -59,16 +59,18 @@ playGame = do
         G.white
         Settings.fps
         (mainSF g imgs)
+        scPID
     die "ended the program for testing"
 
 -- | Our main signal function which is responsible for handling the whole
 -- game process, starting from parsing the input, moving to the game logic
 -- based on that input and finally drawing the resulting game state to
 -- Gloss' Picture
-mainSF :: StdGen -> ImageMap -> SF (Event [InputEvent],(Int,Int)) (G.Picture, T.Pattern T.ControlMap)
+mainSF :: StdGen -> ImageMap -> SF (Event [InputEvent],(Int,Int)) (G.Picture, T.Pattern T.ControlMap, Bool)
 mainSF g is = proc (es,displaySize) -> do
-  updatedGs <- wholeGame g is (initialState g is) <<< parseInput -< es
+  inputs <- parseInput -< es
+  updatedGs <- wholeGame g is (initialState g is) -< inputs
   pic <- arr drawGame -< (updatedGs,displaySize)
   newTidalPattern <- arr calculateAudio -< updatedGs
-  returnA -< (pic, newTidalPattern)
+  returnA -< (pic, newTidalPattern, inputs == Exit)
 

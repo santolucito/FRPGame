@@ -17,7 +17,8 @@ import Types.Image
 data Direction = 
   Up | Down | Left | Right |
   UpLeft | UpRight | DownLeft | DownRight | 
-  Enter | Space | Pause | None 
+  Enter | Space | Pause | None | 
+  Exit
   deriving (Eq, Enum, Bounded, Show, Generic)
 
 nextDir :: Direction -> Direction

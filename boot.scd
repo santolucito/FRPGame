@@ -28,3 +28,5 @@ s.waitForBoot {
 s.latency = 0.6; // increase this if you get "late" messages
 );
 
+// TODO can i use an osc listener to check for a special message (to be sent from haskell) that will s.freeAll
+// then i can end the sclang process safely

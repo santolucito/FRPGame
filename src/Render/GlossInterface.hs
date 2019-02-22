@@ -9,7 +9,10 @@ import Graphics.Gloss (Color, Display, Picture(Blank))
 import qualified Graphics.Gloss.Interface.IO.Game as G
 
 import Data.IORef
-import System.Mem
+import System.Exit
+import System.Process
+
+import Control.Monad
 
 import qualified Sound.Tidal.Context as T
 
@@ -17,10 +20,11 @@ playYampa ::
     Display ->
     Color ->
     Int ->
-    SF (Event [G.Event], (Int,Int)) (Picture, T.Pattern T.ControlMap) ->
+    SF (Event [G.Event], (Int,Int)) (Picture, T.Pattern T.ControlMap, Bool) ->
+    Maybe ProcessHandle -> 
     IO ()
 
-playYampa display color frequency network = 
+playYampa display color frequency network supercolliderProcess = 
   do
     --TODO this doesn't belong here
     tidal <- T.startTidal (T.superdirtTarget {T.oLatency = 0.6, T.oAddress = "127.0.0.1", T.oPort = 57120}) (T.defaultConfig {T.cFrameTimespan = 1/10})
@@ -31,7 +35,11 @@ playYampa display color frequency network =
 
     handle <- reactInit 
         (return (NoEvent, Settings.windowSize))
-        (\_ changed (pic, pat) -> do
+        (\_ changed (pic, pat, exitFlag) -> do
+            when exitFlag $ do
+               case supercolliderProcess of
+                 Just scPID -> putStrLn "Cleaning up SuperCollider" >> cleanupProcess (Nothing, Nothing, Nothing, scPID) >> waitForProcess scPID >>= print >> exitSuccess
+                 Nothing -> exitSuccess 
             if changed then vPic `atomicWriteIORef` pic else return ()
             p 1 pat
             return False)

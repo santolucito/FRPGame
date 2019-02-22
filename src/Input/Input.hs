@@ -10,8 +10,6 @@ import FRP.Yampa (Event(..), SF, returnA, accumHoldBy, arr)
 
 import Data.Maybe
 
-import System.Exit
-import System.IO.Unsafe
 
 -- | Our game uses up, down, left and right arrows to make the moves, so
 -- the first thing we want to do is to parse the Gloss Event into something
@@ -50,7 +48,7 @@ parseInput = proc keys -> do
     | pause         ->  T.Pause
     -- this exits in a way that cabal profiling can handle
     -- TODO kill the running sclang instance
-    | exit          ->  ($!) (\_ -> undefined) (unsafePerformIO exitSuccess) 
+    | exit          ->  T.Exit 
     | up && left    ->  T.UpLeft
     | up && right   ->  T.UpRight
     | down && left  ->  T.DownLeft
