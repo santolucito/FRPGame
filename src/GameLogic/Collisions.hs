@@ -37,12 +37,9 @@ findObjCollisions g = let
 updateCollide :: GameState -> GameObj -> (GameState,GameObj)
 updateCollide g o = 
   if S.empty /= S.intersection (S.fromList $ objCollider g o) (S.fromList $ objCollider g (view (board.player1.gameObj) g))
-  then case _name o of --TOOD need multiway if to remove hardcoded strings?
-       "ghost" ->  GameObjs.Ghost.ghostCollide o g
-       "coin" -> GameObjs.Coin.coinCollide o g 
-       "lamp" -> GameObjs.Lamp.lampCollide o g
-       "mixer" -> GameObjs.Mixer.mixerCollide o g
-       _ -> (traceShow  $ "unhandled collision with " ++ _name o) (g,o)
+  then case (_collider o) of
+      Just f -> f o g
+      Nothing -> (traceShow  $ "unhandled collision with " ++ _name o) (g,o)
   --if we have not collided with anything, turn off the interface (probably will need to change this at some point)
   --TODO somehow need a cleaner approach for this
   else (set (interface.active) (False || (_active._interface) g) g,o) 

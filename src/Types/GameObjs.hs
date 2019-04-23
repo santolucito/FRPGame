@@ -23,7 +23,8 @@ data GameObj = GameObj {
   ,_gifPath :: Maybe FilePath -- ^ for gifs, the top level dir where component images are found
   ,_inMotion   :: Bool
   ,_dir        :: Direction
-} deriving (Show,Eq,Generic)
+  ,_collider   :: Maybe (GameObj -> GameState -> (GameState, GameObj))
+} deriving (Generic)
 
 
 data GameStatus = InProgress
@@ -33,20 +34,30 @@ data GameStatus = InProgress
                 deriving (Eq,Show)
 
 instance Hashable Direction
-instance Hashable GameObj
+instance Hashable GameObj where
+  hashWithSalt n o = hashWithSalt n (
+    (_name o) ++
+    (show $ _objectId o) ++
+    (show $ _currentImg o))
+
+instance Eq GameObj where
+  (==) x y = 
+    (_name x == _name y) &&
+    (_objectId x == _objectId y) &&
+    (_currentImg x == _currentImg y)
 
 data Player = Player {
    _gameObj     :: GameObj
   ,_score      :: Int
   ,_aliveTime  :: Double
-} deriving (Show)
+} 
 
 
 data Board = Board {
    _player1   :: Player
   ,_level     :: Level
   ,_objs      :: HashSet GameObj
-} deriving (Show)
+} 
 
 data GameState = GameState { 
      _board :: Board

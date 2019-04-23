@@ -17,6 +17,7 @@ makeGhost (x,y,color) = GameObj {
   ,_gifPath = Nothing
   ,_inMotion = False
   ,_dir      = Left
+  ,_collider = Just ghostCollide
 }
 
 ghostCollide o g =

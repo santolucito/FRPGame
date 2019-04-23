@@ -17,6 +17,7 @@ makeCoin x y = GameObj {
   ,_gifPath = Nothing
   ,_inMotion = False
   ,_dir      = Left
+  ,_collider = Just coinCollide
 }
 
 coinCollide o g = 

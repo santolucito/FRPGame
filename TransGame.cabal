@@ -52,9 +52,7 @@ executable TransGame
     -Wall
     -O2
     -threaded
-    -fprof-auto
-    -prof
     -rtsopts
     -fexternal-interpreter
-    "-with-rtsopts= -p -s -h -i0.1" 
+    "-with-rtsopts= -s -h -i0.1" 
 

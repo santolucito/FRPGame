@@ -25,6 +25,7 @@ makeLamp objId x y = GameObj {
   ,_gifPath = Just "Mixer/"
   ,_inMotion = True
   ,_dir      = None
+  ,_collider = Just lampCollide
 }
 
 isLampOn :: Int -> GameState -> Bool
