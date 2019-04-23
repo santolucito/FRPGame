@@ -33,13 +33,10 @@ findObjCollisions g = let
 
 -- | If any of the pixels of an object (rn just the positon, not all pixels) overlap with 
 --   any of the positions of the player, generate a new state and object
---   TODO, why not just return the new gameState?
 updateCollide :: GameState -> GameObj -> (GameState,GameObj)
 updateCollide g o = 
   if S.empty /= S.intersection (S.fromList $ objCollider g o) (S.fromList $ objCollider g (view (board.player1.gameObj) g))
-  then case (_collider o) of
-      Just f -> f o g
-      Nothing -> (traceShow  $ "unhandled collision with " ++ _name o) (g,o)
+  then (_collider o) o g
   --if we have not collided with anything, turn off the interface (probably will need to change this at some point)
   --TODO somehow need a cleaner approach for this
   else (set (interface.active) (False || (_active._interface) g) g,o) 

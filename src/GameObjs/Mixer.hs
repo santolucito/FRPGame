@@ -25,7 +25,7 @@ makeMixer objId x y = GameObj {
   ,_gifPath = Just "Mixer/"
   ,_inMotion = True
   ,_dir      = None
-  ,_collider = Just mixerCollide
+  ,_collider = mixerCollide
 }
 
 isMixerOn :: Int -> GameState -> Bool
