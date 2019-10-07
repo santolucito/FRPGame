@@ -23,6 +23,12 @@ s.waitForBoot {
 		~d2 = ~dirt.orbits[1];
 
 	);
+
+        ~exitListener = OSCFunc( { | msg, time, addr, port |
+            0.exit;
+         }, '/haskellExit' , recvPort: 57122);
+
+
 };
 
 s.latency = 0.6; // increase this if you get "late" messages

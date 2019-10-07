@@ -31,8 +31,8 @@ executable TransGame
                        GameObjs.Lamp
                        GameObjs.Coin
                        GameObjs.Ghost
-
-  build-depends:       base >=4.9
+  extensions:          ViewPatterns
+  build-depends:       base >=4.11
                      , gloss >=1.11
                      , gloss-juicy >= 0.2.2
                      , gloss-algorithms >=1.9.2.1
@@ -45,14 +45,14 @@ executable TransGame
                      , unordered-containers >= 0.2.8.0
                      , hashable >= 1.2.6.0
                      , tidal >= 1.0
-                     , process >= 1.6.4
+                     , process >= 1.6.3
+                     , vivid-osc >= 0.5
+                     , network >= 3.1.1
   default-language:    Haskell2010
   ghc-options: 
     -W 
     -Wall
     -O2
     -threaded
-    -rtsopts
     -fexternal-interpreter
-    "-with-rtsopts= -s -h -i0.1" 
 

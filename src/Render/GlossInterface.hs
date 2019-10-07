@@ -1,3 +1,6 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ViewPatterns #-}
+
 module Render.GlossInterface where
 
 import Prelude hiding (id, (.))
@@ -15,6 +18,22 @@ import System.Process
 import Control.Monad
 
 import qualified Sound.Tidal.Context as T
+
+import Network.Socket
+import Network.Socket.ByteString as SB
+
+import Vivid.OSC
+import Control.Concurrent
+
+exitSuperCollider :: IO()
+exitSuperCollider = do
+   (a:_) <- getAddrInfo Nothing (Just "127.0.0.1") (Just "57122")
+   s <- socket (addrFamily a) Datagram defaultProtocol
+   connect s (addrAddress a)
+   SB.send s $ encodeOSC $
+      OSC "/haskellExit" []
+   threadDelay 1000
+   return ()
 
 playYampa :: 
     Display ->
@@ -38,7 +57,12 @@ playYampa display color frequency network supercolliderProcess =
         (\_ changed (pic, pat, exitFlag) -> do
             when exitFlag $ do
                case supercolliderProcess of
-                 Just scPID -> putStrLn "Cleaning up SuperCollider" >> cleanupProcess (Nothing, Nothing, Nothing, scPID) >> waitForProcess scPID >>= print >> exitSuccess
+                 Just scPID -> do
+                    putStrLn "Cleaning up SuperCollider" 
+                    exitSuperCollider
+                    --cleanupProcess (Nothing, Nothing, Nothing, scPID) 
+                    --waitForProcess scPID >>= print
+                    exitSuccess
                  Nothing -> exitSuccess 
             if changed then vPic `atomicWriteIORef` pic else return ()
             p 1 pat
